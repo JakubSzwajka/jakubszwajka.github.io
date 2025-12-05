@@ -158,8 +158,6 @@ By using `lock` and `unlock` we can easily add specific locks (also we can add t
 The same for `set_default_availability` and `set_overwrite_availablity`. 
 
 
-> 💡
-
 Please note that **Resource** is supported by other classes like `TimeSlotSet`, `TimeSlot`,  `DateTimeSlot`, `WeekDayTimeSlot` and `Time`. I don’t want to throw the whole implementation of: 
 
 - merging the time ranges,
@@ -174,8 +172,6 @@ Please visit repo for details. https://github.com/JakubSzwajka/availability-arch
 
 The whole point of this implementation is to have model flexible enough that introducing new business requirements is easy. So let’s create a new requirement and verify that we can support them.
 
-
-> 💡
 
 **Provider can set max working hours per day**. Lets say provider is available for 10hours a day but at most he would like to work 7. No more.  ****
 

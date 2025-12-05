@@ -12,7 +12,6 @@ So my code looked like this..
 ## Before: Property drilling nightmare 🙄
 
 
-> 💡
 
 Notice how `context` is passed through multiple layers just to be used in the final policy check. This is classic property drilling - passing props through components that don't need them, just so deeply nested components can access them.
 
