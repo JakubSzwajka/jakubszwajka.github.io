@@ -1,114 +1,222 @@
 ---
-import { Image } from 'astro:assets';
 import { getCollection } from 'astro:content';
 import BaseHead from '../../components/BaseHead.astro';
 import Footer from '../../components/Footer.astro';
-import FormattedDate from '../../components/FormattedDate.astro';
 import Header from '../../components/Header.astro';
-import { SITE_DESCRIPTION, SITE_TITLE } from '../../consts';
+import { SITE_TITLE } from '../../consts';
 
 const posts = (await getCollection('blog')).sort(
 	(a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf(),
 );
+
+// Format date for display
+function formatDate(date: Date): string {
+	return date.toLocaleDateString('en-US', {
+		day: '2-digit',
+		month: 'short',
+		year: 'numeric'
+	}).toUpperCase().replace(',', '');
+}
+
+// Group posts by year
+const postsByYear = posts.reduce((acc, post) => {
+	const year = post.data.pubDate.getFullYear();
+	if (!acc[year]) acc[year] = [];
+	acc[year].push(post);
+	return acc;
+}, {} as Record<number, typeof posts>);
+
+const years = Object.keys(postsByYear).sort((a, b) => Number(b) - Number(a));
 ---
 
 <!doctype html>
 <html lang="en">
 	<head>
-		<BaseHead title={SITE_TITLE} description={SITE_DESCRIPTION} />
-		<style>
-			main {
-				width: 960px;
-			}
-			ul {
-				display: flex;
-				flex-wrap: wrap;
-				gap: 2rem;
-				list-style-type: none;
-				margin: 0;
-				padding: 0;
-			}
-			ul li {
-				width: calc(50% - 1rem);
-			}
-			ul li * {
-				text-decoration: none;
-				transition: 0.2s ease;
-			}
-			ul li:first-child {
-				width: 100%;
-				margin-bottom: 1rem;
-				text-align: center;
-			}
-			ul li:first-child img {
-				width: 100%;
-			}
-			ul li:first-child .title {
-				font-size: 2.369rem;
-			}
-			ul li img {
-				margin-bottom: 0.5rem;
-				border-radius: 12px;
-			}
-			ul li a {
-				display: block;
-			}
-			.title {
-				margin: 0;
-				color: rgb(var(--black));
-				line-height: 1;
-			}
-			.date {
-				margin: 0;
-				color: rgb(var(--gray));
-			}
-			ul li a:hover h4,
-			ul li a:hover .date {
-				color: rgb(var(--accent));
-			}
-			ul a:hover img {
-				box-shadow: var(--box-shadow);
-			}
-			@media (max-width: 720px) {
-				ul {
-					gap: 0.5em;
-				}
-				ul li {
-					width: 100%;
-					text-align: center;
-				}
-				ul li:first-child {
-					margin-bottom: 0;
-				}
-				ul li:first-child .title {
-					font-size: 1.563em;
-				}
-			}
-		</style>
+		<BaseHead title={`Blog // ${SITE_TITLE}`} description="All blog posts by Kuba Szwajka" />
 	</head>
 	<body>
-		<Header />
-		<main>
-			<section>
-				<ul>
-					{
-						posts.map((post) => (
-							<li>
-								<a href={`/blog/${post.id}/`}>
-									{post.data.heroImage && (
-										<Image width={720} height={360} src={post.data.heroImage} alt="" />
-									)}
-									<h4 class="title">{post.data.title}</h4>
-									<p class="date">
-										<FormattedDate date={post.data.pubDate} />
-									</p>
-								</a>
-							</li>
-						))
-					}
-				</ul>
-			</section>
-		</main>
-		<Footer />
+		<div class="wrapper">
+			<div class="page-header">
+				<a href="/" class="back-link">&lt;- Back to Home</a>
+				<h1 class="section-label">02. ARCHIVE</h1>
+				<p class="post-count">{posts.length} entries logged</p>
+			</div>
+
+			<Header />
+
+			<main class="content-area">
+				{years.map((year) => (
+					<section class="year-section">
+						<h2 class="year-label">{year}</h2>
+						<div class="posts-list">
+							{postsByYear[Number(year)].map((post, index) => (
+								<article class={`entry ${index === postsByYear[Number(year)].length - 1 ? 'last' : ''}`}>
+									<div class="meta">
+										<span>// {formatDate(post.data.pubDate)}</span>
+										{post.data.tags && post.data.tags.length > 0 && (
+											<div class="tags">
+												{post.data.tags.map((tag) => (
+													<span class="tag">{tag.toUpperCase()}</span>
+												))}
+											</div>
+										)}
+									</div>
+									<div class="entry-content">
+										<h3><a href={`/blog/${post.id}/`}>{post.data.title}</a></h3>
+										<p>{post.data.description}</p>
+									</div>
+								</article>
+							))}
+						</div>
+					</section>
+				))}
+			</main>
+
+			<Footer />
+		</div>
 	</body>
 </html>
+
+<style>
+	.page-header {
+		padding: 4rem 2rem 2rem;
+		border-bottom: 2px solid var(--text-main);
+	}
+
+	@media (min-width: 900px) {
+		.page-header {
+			padding: 4rem;
+		}
+	}
+
+	.back-link {
+		color: var(--text-dim);
+		text-decoration: none;
+		font-size: 0.9rem;
+		text-transform: uppercase;
+		display: inline-block;
+		margin-bottom: 2rem;
+		transition: color 0.2s;
+	}
+
+	.back-link:hover {
+		color: var(--accent);
+	}
+
+	.post-count {
+		color: var(--text-dim);
+		font-size: 0.9rem;
+		margin-top: 1rem;
+	}
+
+	.content-area {
+		padding: 2rem;
+	}
+
+	@media (min-width: 900px) {
+		.content-area {
+			padding: 4rem;
+		}
+	}
+
+	.year-section {
+		margin-bottom: 4rem;
+	}
+
+	.year-label {
+		font-family: 'Space Grotesk', sans-serif;
+		font-size: 1.5rem;
+		color: var(--accent);
+		margin-bottom: 2rem;
+		padding-bottom: 0.5rem;
+		border-bottom: 1px dashed var(--border-color);
+	}
+
+	.entry {
+		border-top: 1px solid var(--border-color);
+		padding: 2rem 0;
+		display: grid;
+		grid-template-columns: 1fr;
+		gap: 1rem;
+		transition: background 0.2s;
+		position: relative;
+	}
+
+	.entry.last {
+		border-bottom: 1px solid var(--border-color);
+	}
+
+	.entry:hover {
+		background: #111;
+	}
+
+	.entry::before {
+		content: '';
+		position: absolute;
+		left: -20px;
+		top: 50%;
+		transform: translateY(-50%);
+		width: 10px;
+		height: 10px;
+		background: var(--accent);
+		opacity: 0;
+		transition: opacity 0.2s;
+	}
+
+	.entry:hover::before {
+		opacity: 1;
+	}
+
+	@media (min-width: 768px) {
+		.entry {
+			grid-template-columns: 180px 1fr;
+			gap: 2rem;
+		}
+	}
+
+	.meta {
+		font-size: 0.8rem;
+		color: var(--text-dim);
+		display: flex;
+		flex-direction: column;
+		gap: 0.4rem;
+	}
+
+	.tags {
+		display: flex;
+		flex-wrap: wrap;
+		gap: 0.5rem;
+	}
+
+	.tag {
+		border: 1px solid var(--border-color);
+		padding: 2px 6px;
+		display: inline-block;
+		width: fit-content;
+		font-size: 0.7rem;
+	}
+
+	.entry-content h3 {
+		font-family: 'Space Grotesk', sans-serif;
+		font-size: 1.4rem;
+		margin-bottom: 0.75rem;
+		line-height: 1.2;
+	}
+
+	.entry-content h3 a {
+		color: var(--text-main);
+		text-decoration: none;
+		transition: color 0.2s;
+	}
+
+	.entry-content h3 a:hover {
+		color: var(--accent);
+	}
+
+	.entry-content p {
+		color: var(--text-dim);
+		margin: 0;
+		font-size: 0.95rem;
+		max-width: 600px;
+	}
+</style>

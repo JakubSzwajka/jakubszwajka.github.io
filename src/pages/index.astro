@@ -2,7 +2,22 @@
 import BaseHead from '../components/BaseHead.astro';
 import Footer from '../components/Footer.astro';
 import Header from '../components/Header.astro';
-import { SITE_DESCRIPTION, SITE_TITLE } from '../consts';
+import { SITE_DESCRIPTION, SITE_TITLE, EMAIL } from '../consts';
+import { getCollection } from 'astro:content';
+
+// Get all blog posts sorted by date (newest first)
+const posts = (await getCollection('blog'))
+	.sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf())
+	.slice(0, 5); // Show only 5 most recent on homepage
+
+// Format date for display
+function formatDate(date: Date): string {
+	return date.toLocaleDateString('en-US', {
+		day: '2-digit',
+		month: 'short',
+		year: 'numeric'
+	}).toUpperCase().replace(',', '');
+}
 ---
 
 <!doctype html>
@@ -11,39 +26,320 @@ import { SITE_DESCRIPTION, SITE_TITLE } from '../consts';
 		<BaseHead title={SITE_TITLE} description={SITE_DESCRIPTION} />
 	</head>
 	<body>
-		<Header />
-		<main>
-			<h1>🧑‍🚀 Hello, Astronaut!</h1>
-			<p>
-				Welcome to the official <a href="https://astro.build/">Astro</a> blog starter template. This
-				template serves as a lightweight, minimally-styled starting point for anyone looking to build
-				a personal website, blog, or portfolio with Astro.
-			</p>
-			<p>
-				This template comes with a few integrations already configured in your
-				<code>astro.config.mjs</code> file. You can customize your setup with
-				<a href="https://astro.build/integrations">Astro Integrations</a> to add tools like Tailwind,
-				React, or Vue to your project.
-			</p>
-			<p>Here are a few ideas on how to get started with the template:</p>
-			<ul>
-				<li>Edit this page in <code>src/pages/index.astro</code></li>
-				<li>Edit the site header items in <code>src/components/Header.astro</code></li>
-				<li>Add your name to the footer in <code>src/components/Footer.astro</code></li>
-				<li>Check out the included blog posts in <code>src/content/blog/</code></li>
-				<li>Customize the blog post page layout in <code>src/layouts/BlogPost.astro</code></li>
-			</ul>
-			<p>
-				Have fun! If you get stuck, remember to
-				<a href="https://docs.astro.build/">read the docs</a>
-				or <a href="https://astro.build/chat">join us on Discord</a> to ask questions.
-			</p>
-			<p>
-				Looking for a blog template with a bit more personality? Check out
-				<a href="https://github.com/Charca/astro-blog-template">astro-blog-template</a>
-				by <a href="https://twitter.com/Charca">Maxi Ferreira</a>.
-			</p>
-		</main>
-		<Footer />
+		<div class="wrapper">
+			<!-- HERO SECTION -->
+			<header class="hero">
+				<div class="hero-info">
+					<div class="role-badge">/// Software Architect ///</div>
+					<h1 class="glitch-hover">KUBA<br>SZWAJKA</h1>
+
+					<p class="hero-description">
+						<strong>Welcome. I'm Kuba</strong>
+					</p>
+					<p class="hero-description">
+						I'm a software architect based in <strong>Wroclaw, Poland</strong>, and I love the chaos of building something from nothing.
+					</p>
+					<p class="hero-description">
+						Give me a messy problem, a whiteboard, and a tight deadline—that's when I'm happiest. I've spent the last 5 years jumping into early-stage projects where everything needs to be figured out: <strong>EdTech platforms</strong>, <strong>FinTech marketplaces</strong>, <strong>real-time captioning systems</strong>. The pattern I keep coming back to? Founders who need someone to translate "here's what we want to build" into "here's what's actually running in production."
+					</p>
+					<p class="hero-description">
+						I care deeply about two things: <strong>shipping fast</strong> and <strong>not creating a mess</strong>. Those shouldn't be opposites, but somehow they often are. I think modular architecture is beautiful. I think good documentation is a love letter to your future self. And I think most technical decisions are actually business decisions in disguise.
+					</p>
+					<p class="hero-description">
+						When I'm not building software, I'm writing about it, and what actually works when you're moving fast. This site is part consulting portfolio, part learning-in-public notebook.
+					</p>
+
+					<a href="/work-with-me" class="cta-button">
+						Let's see if we're a good match
+					</a>
+				</div>
+
+				<div class="image-frame">
+					<img
+						src="https://avatars.githubusercontent.com/u/43633894?s=400&u=960d45f0f4e069efde564b3121e882115f88d49d&v=4"
+						alt="Kuba Szwajka"
+						class="profile-pic"
+					/>
+				</div>
+			</header>
+
+			<!-- NAV STRIP -->
+			<Header />
+
+			<!-- BLOG ENTRIES -->
+			<main class="content-area">
+				<h2 class="section-label">01. LOGS</h2>
+
+				{posts.map((post, index) => (
+					<article class={`entry ${index === posts.length - 1 ? 'last' : ''}`}>
+						<div class="meta">
+							<span>// {formatDate(post.data.pubDate)}</span>
+							{post.data.tags && post.data.tags.length > 0 && (
+								<div class="tags">
+									{post.data.tags.map((tag) => (
+										<span class="tag">{tag.toUpperCase()}</span>
+									))}
+								</div>
+							)}
+						</div>
+						<div class="entry-content">
+							<h3>{post.data.title}</h3>
+							<p>{post.data.description}</p>
+							<a href={`/blog/${post.id}/`} class="btn-arrow">Read File -&gt;</a>
+						</div>
+					</article>
+				))}
+
+				<div class="view-all">
+					<a href="/blog" class="btn-arrow">View All Posts -&gt;</a>
+				</div>
+			</main>
+
+			<Footer />
+		</div>
 	</body>
 </html>
+
+<style>
+	/* --- HERO SECTION --- */
+	.hero {
+		border-bottom: 2px solid var(--text-main);
+		padding: 4rem 2rem;
+		display: grid;
+		grid-template-columns: 1fr;
+		gap: 3rem;
+	}
+
+	@media (min-width: 900px) {
+		.hero {
+			grid-template-columns: 1.5fr 1fr;
+			align-items: center;
+			padding: 6rem 4rem;
+		}
+	}
+
+	.hero-info h1 {
+		font-family: 'Space Grotesk', sans-serif;
+		font-size: 4.5rem;
+		font-weight: 700;
+		line-height: 0.9;
+		text-transform: uppercase;
+		margin-bottom: 1.5rem;
+		letter-spacing: -2px;
+	}
+
+	@media (max-width: 600px) {
+		.hero-info h1 {
+			font-size: 3rem;
+		}
+	}
+
+	.role-badge {
+		display: inline-block;
+		background: var(--accent);
+		color: black;
+		font-weight: 700;
+		padding: 0.2rem 0.8rem;
+		text-transform: uppercase;
+		font-size: 0.9rem;
+		margin-bottom: 1.5rem;
+		transform: skew(-10deg);
+	}
+
+	.hero-description {
+		font-size: 1rem;
+		color: var(--text-dim);
+		margin-bottom: 1rem;
+		max-width: 550px;
+		line-height: 1.7;
+	}
+
+	.hero-description:last-of-type {
+		margin-bottom: 2rem;
+	}
+
+	.hero-description strong {
+		color: var(--text-main);
+	}
+
+	.cta-button {
+		display: inline-block;
+		background: var(--text-main);
+		color: black;
+		padding: 1rem 2rem;
+		text-decoration: none;
+		font-weight: 700;
+		text-transform: uppercase;
+		transition: background 0.2s, color 0.2s;
+	}
+
+	.cta-button:hover {
+		background: var(--accent);
+		color: black;
+		text-decoration: none;
+	}
+
+	/* --- IMAGE FRAME --- */
+	.image-frame {
+		position: relative;
+		width: 100%;
+		max-width: 400px;
+		aspect-ratio: 1 / 1.1;
+		margin: 0 auto;
+	}
+
+	.profile-pic {
+		width: 100%;
+		height: 100%;
+		object-fit: cover;
+		filter: grayscale(100%) contrast(110%);
+		border: 1px solid var(--border-color);
+		position: relative;
+		z-index: 2;
+		transition: all 0.3s ease;
+	}
+
+	.image-frame::after {
+		content: '';
+		position: absolute;
+		top: 20px;
+		left: 20px;
+		width: 100%;
+		height: 100%;
+		border: 2px solid var(--accent);
+		background: repeating-linear-gradient(
+			45deg,
+			transparent,
+			transparent 5px,
+			var(--accent) 5px,
+			var(--accent) 6px
+		);
+		z-index: 1;
+		transition: top 0.3s, left 0.3s;
+	}
+
+	.image-frame:hover .profile-pic {
+		filter: grayscale(0%);
+		transform: translate(-5px, -5px);
+	}
+
+	.image-frame:hover::after {
+		top: 10px;
+		left: 10px;
+	}
+
+	/* --- CONTENT AREA --- */
+	.content-area {
+		padding: 4rem 2rem;
+	}
+
+	@media (min-width: 900px) {
+		.content-area {
+			padding: 4rem;
+		}
+	}
+
+	/* --- BLOG ENTRIES --- */
+	.entry {
+		border-top: 1px solid var(--border-color);
+		padding: 3rem 0;
+		display: grid;
+		grid-template-columns: 1fr;
+		gap: 1rem;
+		transition: background 0.2s;
+		position: relative;
+	}
+
+	.entry.last {
+		border-bottom: 1px solid var(--border-color);
+	}
+
+	.entry:hover {
+		background: #111;
+	}
+
+	.entry::before {
+		content: '';
+		position: absolute;
+		left: -20px;
+		top: 50%;
+		transform: translateY(-50%);
+		width: 10px;
+		height: 10px;
+		background: var(--accent);
+		opacity: 0;
+		transition: opacity 0.2s;
+	}
+
+	.entry:hover::before {
+		opacity: 1;
+	}
+
+	@media (min-width: 768px) {
+		.entry {
+			grid-template-columns: 200px 1fr;
+			gap: 3rem;
+		}
+	}
+
+	.meta {
+		font-size: 0.85rem;
+		color: var(--text-dim);
+		display: flex;
+		flex-direction: column;
+		gap: 0.5rem;
+	}
+
+	.tags {
+		display: flex;
+		flex-wrap: wrap;
+		gap: 0.5rem;
+	}
+
+	.tag {
+		border: 1px solid var(--border-color);
+		padding: 2px 8px;
+		display: inline-block;
+		width: fit-content;
+		font-size: 0.75rem;
+	}
+
+	.entry-content h3 {
+		font-family: 'Space Grotesk', sans-serif;
+		font-size: 1.75rem;
+		margin-bottom: 1rem;
+		line-height: 1.2;
+	}
+
+	@media (max-width: 600px) {
+		.entry-content h3 {
+			font-size: 1.4rem;
+		}
+	}
+
+	.entry-content p {
+		color: var(--text-dim);
+		margin-bottom: 1.5rem;
+		max-width: 650px;
+	}
+
+	.btn-arrow {
+		color: var(--accent);
+		text-decoration: none;
+		font-weight: 700;
+		text-transform: uppercase;
+		font-size: 0.9rem;
+		border-bottom: 2px solid transparent;
+		transition: border-color 0.2s;
+	}
+
+	.btn-arrow:hover {
+		border-bottom: 2px solid var(--accent);
+		text-decoration: none;
+	}
+
+	.view-all {
+		margin-top: 3rem;
+		text-align: center;
+	}
+</style>

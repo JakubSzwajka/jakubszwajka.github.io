@@ -1,0 +1,394 @@
+---
+import BaseHead from '../components/BaseHead.astro';
+import Footer from '../components/Footer.astro';
+import Header from '../components/Header.astro';
+import { SITE_TITLE, EMAIL } from '../consts';
+---
+
+<!doctype html>
+<html lang="en">
+	<head>
+		<BaseHead title={`Work With Me // ${SITE_TITLE}`} description="I partner with early-stage founders who need to move fast without creating technical debt." />
+	</head>
+	<body>
+		<div class="wrapper">
+			<div class="page-header">
+				<a href="/" class="back-link">&lt;- Back to Home</a>
+				<h1>Let's see if we're a good match!</h1>
+				<p class="subtitle">Work with me</p>
+			</div>
+
+			<Header />
+
+			<main class="content-area">
+				<section class="intro">
+					<p>I partner with early-stage founders who need to move fast without creating technical debt. If you need a product from zero to market, and can't afford to rebuild in 6 months - we should talk.</p>
+				</section>
+
+				<section class="problems">
+					<h2 class="section-title">Problems I Solve</h2>
+
+					<div class="problem-card">
+						<h3>"We need an MVP but don't have a technical co-founder"</h3>
+						<p>You've validated the market. You have the vision. You need someone who can translate that into a working product with solid architecture. Not a dev shop that churns out code - someone who thinks like a technical co-founder.</p>
+						<p class="what-you-get"><strong>What you get:</strong> Strategic technical thinking, rapid domain discovery, architecture designed for your specific business model, and a product built to evolve as you learn from users.</p>
+					</div>
+
+					<div class="problem-card">
+						<h3>"We're not sure what's technically possible"</h3>
+						<p>You have ideas but don't know what's realistic in 8 weeks vs. 8 months. You need someone to help prioritize what actually moves the needle vs. what's just nice to have.</p>
+						<p class="what-you-get"><strong>What you get:</strong> Honest technical advice on what to build first, what to defer, and what's going to bite you later. I've seen the patterns - what works and what becomes expensive regret.</p>
+					</div>
+
+					<div class="problem-card">
+						<h3>"We need to ship fast but can't sacrifice quality"</h3>
+						<p>Speed matters, but so does not painting yourself into a corner. You need modular architecture that lets you pivot, scale, and hand off to a team you hire later.</p>
+						<p class="what-you-get"><strong>What you get:</strong> Clean, well-documented code with good practices from day one. When you're ready to hire junior devs, they can extend what I've built - not spend 6 months understanding spaghetti.</p>
+					</div>
+
+					<div class="problem-card">
+						<h3>"We started building but worried we're going the wrong direction"</h3>
+						<p>You have some code but it feels fragile. You're not sure if the architecture will hold up. You need a second opinion before you're in too deep.</p>
+						<p class="what-you-get"><strong>What you get:</strong> Technical audit of what you have, clear assessment of what's working and what needs to change, and a roadmap for getting back on track without starting over.</p>
+					</div>
+				</section>
+
+				<section class="how-i-work">
+					<h2 class="section-title">How I Work</h2>
+
+					<div class="work-grid">
+						<div class="work-item">
+							<h4>Discovery First</h4>
+							<p>I start by understanding your domain, users, and business model. What's the core value? What can wait? What's going to be painful to change later? This phase shapes everything.</p>
+						</div>
+
+						<div class="work-item">
+							<h4>Iterative Building</h4>
+							<p>I ship working features regularly so you can test with real users and we can adjust as we learn. The goal is momentum + quality, not perfection.</p>
+						</div>
+
+						<div class="work-item">
+							<h4>Clean Handoff</h4>
+							<p>When we're done, you get documentation, architecture decisions explained, and recommendations for what to do next - whether that's hiring a team or continuing with me.</p>
+						</div>
+
+						<div class="work-item">
+							<h4>Strategic Thinking Throughout</h4>
+							<p>You don't just get code. You get someone thinking about your business constraints, technical trade-offs, and what actually matters for your stage.</p>
+						</div>
+					</div>
+				</section>
+
+				<section class="fit-section">
+					<div class="fit-grid">
+						<div class="fit-box good">
+							<h3>You're Probably a Good Fit If:</h3>
+							<ul>
+								<li>You need something built from scratch (or close to it)</li>
+								<li>Timeline matters (you need it in weeks/months, not someday)</li>
+								<li>You value architecture that doesn't become technical debt</li>
+								<li>You're willing to be collaborative (I ask questions, you have answers)</li>
+							</ul>
+						</div>
+
+						<div class="fit-box not-good">
+							<h3>You're Probably NOT a Good Fit If:</h3>
+							<ul>
+								<li>You need ongoing maintenance of existing systems</li>
+								<li>You want the absolute cheapest option</li>
+								<li>You're enterprise-scale with complex procurement</li>
+								<li>You need a full team (I'm one person who moves fast, not a dev shop)</li>
+							</ul>
+						</div>
+					</div>
+				</section>
+
+				<section class="contact-section">
+					<h2 class="section-title">Let's Talk</h2>
+
+					<p>If this resonates, email me at <a href={`mailto:${EMAIL}`}>{EMAIL}</a> with:</p>
+
+					<ul class="contact-list">
+						<li>What you're building (2-3 sentences)</li>
+						<li>Where you are now (idea stage? some code? prototype?)</li>
+						<li>What timeline you're thinking</li>
+					</ul>
+
+					<p class="newsletter-note"><strong>Not ready yet?</strong> Join my newsletter where I share insights on building products fast without creating technical debt: <a href="https://medium.com/@szwajkajakub" target="_blank">medium.com/@szwajkajakub</a></p>
+
+					<div class="signature">
+						<p class="name">Kuba Szwajka</p>
+						<p class="role">0-to-1 Software Architect</p>
+						<p class="location">Based in Wroclaw, Poland</p>
+					</div>
+				</section>
+			</main>
+
+			<Footer />
+		</div>
+	</body>
+</html>
+
+<style>
+	.page-header {
+		padding: 4rem 2rem 2rem;
+		border-bottom: 2px solid var(--text-main);
+	}
+
+	@media (min-width: 900px) {
+		.page-header {
+			padding: 4rem;
+		}
+	}
+
+	.back-link {
+		color: var(--text-dim);
+		text-decoration: none;
+		font-size: 0.9rem;
+		text-transform: uppercase;
+		display: inline-block;
+		margin-bottom: 2rem;
+		transition: color 0.2s;
+	}
+
+	.back-link:hover {
+		color: var(--accent);
+	}
+
+	.page-header h1 {
+		font-family: 'Space Grotesk', sans-serif;
+		font-size: 2.5rem;
+		line-height: 1.1;
+		margin-bottom: 0.5rem;
+	}
+
+	@media (min-width: 900px) {
+		.page-header h1 {
+			font-size: 3rem;
+		}
+	}
+
+	.subtitle {
+		color: var(--accent);
+		font-size: 1.1rem;
+		text-transform: uppercase;
+		margin: 0;
+	}
+
+	.content-area {
+		padding: 3rem 2rem;
+		max-width: 800px;
+	}
+
+	@media (min-width: 900px) {
+		.content-area {
+			padding: 4rem;
+		}
+	}
+
+	/* Sections */
+	section {
+		margin-bottom: 4rem;
+	}
+
+	.section-title {
+		font-family: 'Space Grotesk', sans-serif;
+		font-size: 1.5rem;
+		color: var(--accent);
+		margin-bottom: 2rem;
+		padding-bottom: 0.5rem;
+		border-bottom: 1px dashed var(--border-color);
+	}
+
+	/* Intro */
+	.intro p {
+		font-size: 1.2rem;
+		color: var(--text-dim);
+		line-height: 1.8;
+	}
+
+	/* Problem Cards */
+	.problem-card {
+		border: 1px solid var(--border-color);
+		padding: 2rem;
+		margin-bottom: 1.5rem;
+		background: var(--bg-panel);
+	}
+
+	.problem-card h3 {
+		font-family: 'Space Grotesk', sans-serif;
+		font-size: 1.3rem;
+		margin-bottom: 1rem;
+		color: var(--text-main);
+	}
+
+	.problem-card p {
+		color: var(--text-dim);
+		line-height: 1.7;
+		margin-bottom: 1rem;
+	}
+
+	.problem-card p:last-child {
+		margin-bottom: 0;
+	}
+
+	.what-you-get {
+		border-left: 3px solid var(--accent);
+		padding-left: 1rem;
+		margin-top: 1.5rem;
+	}
+
+	.what-you-get strong {
+		color: var(--accent);
+	}
+
+	/* How I Work Grid */
+	.work-grid {
+		display: grid;
+		grid-template-columns: 1fr;
+		gap: 1.5rem;
+	}
+
+	@media (min-width: 600px) {
+		.work-grid {
+			grid-template-columns: 1fr 1fr;
+		}
+	}
+
+	.work-item {
+		border-top: 2px solid var(--accent);
+		padding-top: 1rem;
+	}
+
+	.work-item h4 {
+		font-family: 'Space Grotesk', sans-serif;
+		font-size: 1.1rem;
+		margin-bottom: 0.75rem;
+		color: var(--text-main);
+	}
+
+	.work-item p {
+		color: var(--text-dim);
+		line-height: 1.7;
+		font-size: 0.95rem;
+	}
+
+	/* Fit Section */
+	.fit-grid {
+		display: grid;
+		grid-template-columns: 1fr;
+		gap: 1.5rem;
+	}
+
+	@media (min-width: 600px) {
+		.fit-grid {
+			grid-template-columns: 1fr 1fr;
+		}
+	}
+
+	.fit-box {
+		padding: 1.5rem;
+		border: 1px solid var(--border-color);
+	}
+
+	.fit-box.good {
+		border-left: 4px solid var(--accent);
+	}
+
+	.fit-box.not-good {
+		border-left: 4px solid var(--text-dim);
+	}
+
+	.fit-box h3 {
+		font-family: 'Space Grotesk', sans-serif;
+		font-size: 1rem;
+		margin-bottom: 1rem;
+		text-transform: uppercase;
+	}
+
+	.fit-box.good h3 {
+		color: var(--accent);
+	}
+
+	.fit-box.not-good h3 {
+		color: var(--text-dim);
+	}
+
+	.fit-box ul {
+		list-style: none;
+		padding: 0;
+		margin: 0;
+	}
+
+	.fit-box li {
+		color: var(--text-dim);
+		padding: 0.5rem 0;
+		border-bottom: 1px solid var(--border-color);
+		font-size: 0.9rem;
+	}
+
+	.fit-box li:last-child {
+		border-bottom: none;
+	}
+
+	/* Contact Section */
+	.contact-section p {
+		color: var(--text-dim);
+		line-height: 1.7;
+		margin-bottom: 1.5rem;
+	}
+
+	.contact-section a {
+		color: var(--accent);
+	}
+
+	.contact-list {
+		list-style: none;
+		padding: 0;
+		margin: 0 0 2rem 0;
+	}
+
+	.contact-list li {
+		color: var(--text-dim);
+		padding: 0.75rem 0;
+		padding-left: 1.5rem;
+		border-left: 2px solid var(--border-color);
+		margin-bottom: 0.5rem;
+	}
+
+	.newsletter-note {
+		background: var(--bg-panel);
+		padding: 1.5rem;
+		border: 1px solid var(--border-color);
+	}
+
+	.newsletter-note strong {
+		color: var(--text-main);
+	}
+
+	/* Signature */
+	.signature {
+		margin-top: 3rem;
+		padding-top: 2rem;
+		border-top: 1px solid var(--border-color);
+	}
+
+	.signature .name {
+		font-family: 'Space Grotesk', sans-serif;
+		font-size: 1.3rem;
+		color: var(--text-main);
+		margin-bottom: 0.25rem;
+	}
+
+	.signature .role {
+		color: var(--accent);
+		margin-bottom: 0.25rem;
+		text-transform: uppercase;
+		font-size: 0.9rem;
+	}
+
+	.signature .location {
+		color: var(--text-dim);
+		font-size: 0.9rem;
+	}
+</style>
