@@ -57,9 +57,14 @@ class AlertModel(BaseModel):
     resolved: Mapped[bool]              # Is it resolved?
     resolved_at: Mapped[Optional[datetime]]
 
+    # CRITICAL: Add composite index for query performance
+    __table_args__ = (
+        Index('ix_alerts_about_type_id', 'about_type', 'about_id'),
+    )
+
     def resolve(self):
         self.resolved = True
-        self.resolved_at =
+        self.resolved_at = datetime.utcnow()
 ```
 Notice the `about_id` + `about_type` combo? That's our type discriminator. It lets ONE table reference many different entity types by storing both the ID and the type of the entity.
 
@@ -68,14 +73,14 @@ Now here's where composition shines. We create a mixin that any model can use to
 ```python
 class AlertableMixin:
     @declared_attr
-    def alerts(self) -> Mapped[list[AlertModel]]:
+    def alerts(cls) -> Mapped[list[AlertModel]]:
         return relationship(
             'AlertModel',
             primaryjoin=lambda: and_(
                 AlertModel.about_type == literal(
-                    getattr(self, '__name__').upper().replace('MODEL', '')
+                    cls.__name__.upper().replace('MODEL', '')
                 ),
-                foreign(AlertModel.about_id) == getattr(self, 'id'),
+                foreign(AlertModel.about_id) == cls.id,
             ),
             viewonly=True,
             lazy='raise',  # Force explicit loading
@@ -85,7 +90,7 @@ class AlertableMixin:
         """Create a new alert for this entity"""
         return AlertModel(
             about_type=self.__class__.__name__.upper().replace('MODEL', ''),
-            about_id=getattr(self, 'id'),
+            about_id=self.id,
             alert_type=alert_type,
         )
 
@@ -105,7 +110,7 @@ class AlertableMixin:
 - **Composition**: The mixin composes the alert behavior into any model that inherits it
 - **Discriminator-based relationship**: `@declared_attr` creates the relationship dynamically, using the type discriminator (`about_id` + `about_type`)
 - **Type extraction**: The `primaryjoin` extracts the entity type from the model name (`UserModel` → `USER`) – this is how we match alerts to the right entity
-- **Explicit loading**: `lazy='raise'` prevents N+1 queries – you MUST explicitly load alerts when you need them
+- **Explicit loading**: `lazy='raise'` prevents N+1 queries – you MUST explicitly load alerts when you need them using `selectinload(BookingModel.alerts)` in your query. This prevents the common performance pitfall where loading 100 bookings triggers 100 additional database queries.
 - **Encapsulation**: Helper methods encapsulate common operations, keeping the behavior's API clean
 
 The mixin is a reusable component. Add it to any model, and that model gets alert functionality. That's composition in action.
@@ -128,7 +133,9 @@ Done. Both models now have alerts.
 # Create an alert
 booking = await booking_repo.get_booking_by_id(booking_id)
 alert = booking.create_alert(
-    alert_type=
+    alert_type=AlertType.MISSING_DOCUMENTS
+)
+await session.commit()
 ```
 ## Example 2: Admin Notes
 Now let's look at a different behavior with different requirements. Admins wanted to leave internal notes on various entities throughout the admin panel.
@@ -143,7 +150,7 @@ class NoteModel(BaseModel):
     content: Mapped[str] = mapped_column(String, nullable=False)
 
     # Track who created the note
-    admin_id: Mapped[str] = mapped_column(ForeignKey('
+    admin_id: Mapped[str] = mapped_column(ForeignKey('admins.id'))
 ```
 Same discriminator-based pattern, but with audit fields and a relationship to track who created the note.
 
@@ -151,14 +158,14 @@ Same discriminator-based pattern, but with audit fields and a relationship to tr
 ```python
 class NoteableMixin:
     @declared_attr
-    def notes(self) -> Mapped[list[NoteModel]]:
+    def notes(cls) -> Mapped[list[NoteModel]]:
         return relationship(
             'NoteModel',
             primaryjoin=lambda: and_(
                 NoteModel.about_type == literal(
-                    getattr(self, '__name__').upper().replace('MODEL', '')
+                    cls.__name__.upper().replace('MODEL', '')
                 ),
-                foreign(NoteModel.about_id) == getattr(self, 'id'),
+                foreign(NoteModel.about_id) == cls.id,
             ),
             viewonly=True,
             lazy='select',  # Auto-load when accessed
@@ -168,13 +175,13 @@ class NoteableMixin:
     def create_note(self, *, content: str, admin_id: str) -> NoteModel:
         return NoteModel(
             about_type=self.__class__.__name__.upper().replace('MODEL', ''),
-            about_id=getattr(self, 'id'),
+            about_id=self.id,
             content=content,
             admin_id=admin_id,
         )
 ```
 **Notice the differences?**
-- `lazy='select'` instead of `lazy='raise'` – notes are simpler, auto-loading is fine
+- `lazy='select'` instead of `lazy='raise'` – `lazy='select'` auto-loads notes when you access `booking.notes`, which is convenient but can cause N+1 queries if you're not careful (loading 100 bookings will trigger 100 separate queries). `lazy='raise'` forces you to explicitly load relationships (using `selectinload()` or `joinedload()`), preventing accidental N+1 queries. Choose based on your query patterns: use `'raise'` for performance-critical code, `'select'` for admin panels where convenience matters more.
 - `order_by='desc(NoteModel.created_at)'` – always get most recent notes first
 - `create_note()` requires `admin_id` for audit trail
 
@@ -194,7 +201,10 @@ See that? `BookingModel` uses BOTH mixins. It composes both behaviors – alerts
 booking = await booking_repo.get_booking_by_id(booking_id)
 note = booking.create_note(
     content="Customer called about missing invoice",
-    admin_id=current_
+    admin_id=current_admin.id
+)
+await session.add(note)
+await session.commit()
 ```
 ## Configuration Choices Matter
 Both mixins use the same discriminator-based pattern, but they're configured differently because they have different needs:
@@ -211,8 +221,8 @@ Both mixins use the same discriminator-based pattern, but they're configured dif
 </tr>
 <tr>
 <td>**Why?**</td>
-<td>Performance-critical queries, explicit loading prevents N+1</td>
-<td>Simple display, auto-loading is fine</td>
+<td>Performance-critical queries with many entities. Forces explicit loading (selectinload/joinedload) to prevent N+1 queries.</td>
+<td>Admin UI with fewer entities loaded. Convenience over performance. Still risks N+1 if loading many records.</td>
 </tr>
 <tr>
 <td>**order_by**</td>
@@ -238,6 +248,59 @@ Both mixins use the same discriminator-based pattern, but they're configured dif
 
 This flexibility is the power of composition. Same discriminator-based structure, different configuration per behavior. Each mixin encapsulates one concern, and you compose them together as needed.
 
+## Performance Considerations
+
+Type discriminator patterns work great, but they require attention to performance at scale:
+
+### Composite Indexes Are Essential
+
+Always add composite indexes on your discriminator columns. Without them, queries will scan the entire table:
+
+```python
+class AlertModel(BaseModel):
+    # ... fields ...
+
+    __table_args__ = (
+        Index('ix_alerts_about_type_id', 'about_type', 'about_id'),
+    )
+```
+
+The index order matters: `('about_type', 'about_id')` works best for queries that filter by type first, then ID.
+
+### Query Performance at Scale
+
+When your discriminator table grows to millions of rows, queries can slow down:
+
+```python
+# ❌ BAD: Without index or with lazy='select', this is slow
+bookings = await session.execute(select(BookingModel).limit(100))
+for booking in bookings.scalars():
+    print(booking.alerts)  # N+1 queries! 100 separate SELECT queries
+
+# ✅ GOOD: Explicit loading with selectinload
+bookings = await session.execute(
+    select(BookingModel)
+    .options(selectinload(BookingModel.alerts))
+    .limit(100)
+)
+for booking in bookings.scalars():
+    print(booking.alerts)  # Single additional SELECT with IN clause
+```
+
+Use `lazy='raise'` to catch N+1 queries during development, then use `selectinload()` or `joinedload()` for explicit loading.
+
+### When to Denormalize
+
+If you're querying "number of unresolved alerts" frequently, consider denormalizing:
+
+```python
+class BookingModel(BaseModel, AlertableMixin):
+    # Cache the count
+    unresolved_alert_count: Mapped[int] = mapped_column(default=0)
+```
+
+Update the count when alerts are created/resolved. This trades write complexity for read performance.
+
 ## Other Behaviors This Pattern Unlocks
 Once you see this pattern, you start seeing it everywhere. Here are 5 more real-world use cases where the same discriminator-based composition approach works perfectly:
 ### 1. AttachableMixin – File Uploads on Anything
@@ -251,7 +314,7 @@ class AttachmentModel(BaseModel):
     file_url: Mapped[str]  # S3 URL or similar
     file_type: Mapped[str]  # 'pdf', 'image', 'doc'
     file_size: Mapped[int]
-    uploaded_by_id: Mapped[str] = mapped_column(ForeignKey('
+    uploaded_by_id: Mapped[str] = mapped_column(ForeignKey('users.id'))
 ```
 **Use case**: Support tickets need attachments, invoices need attachments, user profiles need attachments. One table, one mixin, infinite attachment points.
 ### 2. TaggableMixin – Flexible Tagging System
@@ -289,7 +352,7 @@ class FavoriteModel(BaseModel):
 
     favorited_id: Mapped[str]
     favorited_type: Mapped[FavoriteType]
-    user_id: Mapped[str] = mapped_column(ForeignKey('
+    user_id: Mapped[str] = mapped_column(ForeignKey('users.id'))
 ```
 **Use case**: Users can favorite articles, products, search queries, dashboard views, reports. Build a "My Favorites" page that shows everything they've saved, regardless of type. One query, heterogeneous results.
 
@@ -300,12 +363,14 @@ class ReviewModel(BaseModel):
 
     reviewed_id: Mapped[str]
     reviewed_type: Mapped[ReviewType]
-    reviewer_id: Mapped[str] = mapped_column(ForeignKey('
+    reviewer_id: Mapped[str] = mapped_column(ForeignKey('users.id'))
+    rating: Mapped[int]  # 1-5 stars
+    comment: Mapped[Optional[str]]
 ```
 
 **Use case**: Marketplace where users review products, sellers, AND delivery services. One review system, different entity types. Easy to build aggregate ratings and "most helpful" sorting.
 ---
-All of these follow the same architectural pattern: **type discriminator** (`\{entity\}_id` + `\{entity\}_type`) plus behavior-specific fields. The mixin composes the relationship boilerplate, you just add the business logic. This is composition in action – each behavior is a reusable component you can mix into any model.
+All of these follow the same architectural pattern: **type discriminator** (`{entity}_id` + `{entity}_type`) plus behavior-specific fields. The mixin composes the relationship boilerplate, you just add the business logic. This is composition in action – each behavior is a reusable component you can mix into any model.
 
 ## Why This Approach Works
 
