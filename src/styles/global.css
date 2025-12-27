@@ -23,6 +23,17 @@
 	padding: 0;
 }
 
+/* --- Text Selection --- */
+::selection {
+	background-color: var(--accent);
+	color: var(--bg-color);
+}
+
+::-moz-selection {
+	background-color: var(--accent);
+	color: var(--bg-color);
+}
+
 body {
 	background-color: var(--bg-color);
 	color: var(--text-main);

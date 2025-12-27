@@ -1,5 +1,5 @@
 ---
-title: 'Composition Over Copy-Paste: Building Reusable Behaviors with Type Discriminators'
+title: 'Composition Over Copy-Paste: Building Reusable Behaviors with Type Discriminators in SQLAlchemy'
 description: 'You know that feeling when you need to add the same feature to multiple models in your app? Like, you want several different entities to have comments, or alerts, or notifications...'
 pubDate: 'December 22, 2025'
 tags: ['Python', 'SQLAlchemy', 'Patterns', 'Architecture', 'HowTo']
@@ -39,9 +39,7 @@ Before we dive into code, let's be clear: this is an **architectural pattern**, 
 
 - **Type discriminators**: A database design pattern where one table references multiple entity types using a discriminator column. Rails calls this `polymorphic: true`, Django calls it `GenericForeignKey`, and you can build it in any ORM or even raw SQL.
 
-- **Composition**: Using mixins (or traits, or modules, depending on your language) to compose behaviors into classes. This is "composition over inheritance" in action.
-
-SQLAlchemy is just our implementation tool. The pattern works the same way in Django, Rails, or any ORM that supports dynamic relationships. We're using SQLAlchemy here because that's what we used, but the architectural insight applies everywhere.
+- **Composition**: Using mixins to compose behaviors into classes. This is "composition over inheritance" in action.
 
 ## Example 1: System Alerts
 
@@ -57,14 +55,13 @@ class AlertModel(BaseModel):
     resolved: Mapped[bool]              # Is it resolved?
     resolved_at: Mapped[Optional[datetime]]
 
-    # CRITICAL: Add composite index for query performance
     __table_args__ = (
         Index('ix_alerts_about_type_id', 'about_type', 'about_id'),
     )
 
     def resolve(self):
         self.resolved = True
-        self.resolved_at = datetime.utcnow()
+        self.resolved_at = datetime.now(UTC)
 ```
 Notice the `about_id` + `about_type` combo? That's our type discriminator. It lets ONE table reference many different entity types by storing both the ID and the type of the entity.
 
@@ -203,8 +200,6 @@ note = booking.create_note(
     content="Customer called about missing invoice",
     admin_id=current_admin.id
 )
-await session.add(note)
-await session.commit()
 ```
 ## Configuration Choices Matter
 Both mixins use the same discriminator-based pattern, but they're configured differently because they have different needs:
@@ -216,8 +211,8 @@ Both mixins use the same discriminator-based pattern, but they're configured dif
 </tr>
 <tr>
 <td>**lazy**</td>
-<td>`'raise'`</td>
-<td>`'select'`</td>
+<td>'raise'</td>
+<td>'select'</td>
 </tr>
 <tr>
 <td>**Why?**</td>
@@ -227,7 +222,7 @@ Both mixins use the same discriminator-based pattern, but they're configured dif
 <tr>
 <td>**order_by**</td>
 <td>None</td>
-<td>`desc(created_at)`</td>
+<td>desc(created_at)</td>
 </tr>
 <tr>
 <td>**Why?**</td>
