@@ -138,33 +138,10 @@ const years = Object.keys(postsByYear).sort((a, b) => Number(b) - Number(a));
 		display: grid;
 		grid-template-columns: 1fr;
 		gap: 1rem;
-		transition: background 0.2s;
-		position: relative;
 	}
 
 	.entry.last {
 		border-bottom: 1px solid var(--border-color);
-	}
-
-	.entry:hover {
-		background: #111;
-	}
-
-	.entry::before {
-		content: '';
-		position: absolute;
-		left: -20px;
-		top: 50%;
-		transform: translateY(-50%);
-		width: 10px;
-		height: 10px;
-		background: var(--accent);
-		opacity: 0;
-		transition: opacity 0.2s;
-	}
-
-	.entry:hover::before {
-		opacity: 1;
 	}
 
 	@media (min-width: 768px) {

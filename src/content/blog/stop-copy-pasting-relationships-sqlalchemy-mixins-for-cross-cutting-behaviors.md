@@ -1,31 +1,47 @@
 ---
-title: 'Stop Copy-Pasting Relationships: SQLAlchemy Mixins for Cross-Cutting Behaviors'
+title: 'Composition Over Copy-Paste: Building Reusable Behaviors with Type Discriminators'
 description: 'You know that feeling when you need to add the same feature to multiple models in your app? Like, you want several different entities to have comments, or alerts, or notifications...'
 pubDate: 'December 22, 2025'
-tags: ['Python', 'SQLAlchemy', 'Patterns', 'HowTo']
+tags: ['Python', 'SQLAlchemy', 'Patterns', 'Architecture', 'HowTo']
 ---
 
-You know that feeling when you need to add the same feature to multiple models in your app? Like, you want several different entities to have comments, or alerts, or notifications, and you're sitting there thinking "do I really need to copy-paste this relationship code everywhere?"
-Yeah, me too.
-Rails developers have been laughing at us with their ActiveRecord Concerns for years. But here's the thing – **SQLAlchemy has mixins, and they're actually pretty cool** when you use them right.
-Let me show you TWO real examples from a production booking platform where we needed different behaviors that could work with ANY entity in the database.
+Working on a booking platform, we needed alerts and notes that could attach to any entity – bookings, users, profiles. The obvious approach was copy-pasting relationships everywhere.
+
+Instead, we built reusable behaviors using composition: write it once, add it to any model. This isn't a SQLAlchemy trick – it's an architectural pattern that works anywhere. Here's how we built composable behaviors that work across the entire system.
 
 ## The Problem: Cross-Cutting Behaviors
+
 Picture this: you're building a booking platform. Product comes to you with two requests:
+
 **Request 1**: "We need a way to track alerts – missing documents on bookings, incomplete onboarding on users, expired contracts, failed payments. The system should automatically create and resolve these."
 **Request 2**: "Admins want to leave notes on things – bookings, user profiles, captioner profiles. You know, internal context that helps us manage accounts."
+
 The naive approach? Create separate tables for each combination: `booking_alerts`, `user_alerts`, `booking_notes`, `user_notes`, `captioner_profile_notes`... yeah, no thanks.
 The slightly better but still annoying approach? Manually add the same relationship code to every model. Copy, paste, hope you don't miss anything when you add the next entity type.
 
 **There's a better way.**
 
-## The Solution: Polymorphic Relationships with Mixins
-Here's the idea: create ONE table per behavior that can reference any entity type, then use a mixin to add that behavior to any model that needs it.
+## The Solution: Composition with Type Discriminators
+
+The core idea: **composition** (mixins that add behaviors) + **type discriminators** (one table that references multiple entity types using a discriminator column). This pattern isn't SQLAlchemy-specific – Rails has it, Django has it, you can build it in any ORM. The key insight is separating the "what" (the behavior) from the "who" (the entity type).
+
+Here's how it works: create ONE table per behavior that can reference any entity type using a type discriminator, then use a mixin to compose that behavior into any model that needs it.
 
 We'll build two examples:
 1. **Alerts** – system-generated warnings that get resolved
 2. **Notes** – admin-created comments with audit trails
-Both use the same polymorphic pattern, but configured differently for their specific needs.
+
+Both use the same discriminator-based pattern, but configured differently for their specific needs.
+
+### This Isn't About SQLAlchemy
+
+Before we dive into code, let's be clear: this is an **architectural pattern**, not a SQLAlchemy feature. The concepts are universal:
+
+- **Type discriminators**: A database design pattern where one table references multiple entity types using a discriminator column. Rails calls this `polymorphic: true`, Django calls it `GenericForeignKey`, and you can build it in any ORM or even raw SQL.
+
+- **Composition**: Using mixins (or traits, or modules, depending on your language) to compose behaviors into classes. This is "composition over inheritance" in action.
+
+SQLAlchemy is just our implementation tool. The pattern works the same way in Django, Rails, or any ORM that supports dynamic relationships. We're using SQLAlchemy here because that's what we used, but the architectural insight applies everywhere.
 
 ## Example 1: System Alerts
 
@@ -45,9 +61,10 @@ class AlertModel(BaseModel):
         self.resolved = True
         self.resolved_at =
 ```
-Notice the `about_id` + `about_type` combo? That's our polymorphic key. It lets ONE table reference many different entity types.
-### The Alertable Mixin
-Now here's where it gets interesting. We create a mixin that any model can use:
+Notice the `about_id` + `about_type` combo? That's our type discriminator. It lets ONE table reference many different entity types by storing both the ID and the type of the entity.
+
+### Composing the Alert Behavior
+Now here's where composition shines. We create a mixin that any model can use to compose in the alert behavior:
 ```python
 class AlertableMixin:
     @declared_attr
@@ -83,12 +100,17 @@ class AlertableMixin:
             if a.alert_type == alert_type and not a.resolved
         )
 ```
+
 **What's happening here?**
-- `@declared_attr` creates the relationship dynamically at class definition time
-- The `primaryjoin` extracts the entity type from the model name (`UserModel` → `USER`)
-- `lazy='raise'` prevents N+1 queries – you MUST explicitly load alerts
-- Helper methods encapsulate common operations
-### Using the Alert Mixin
+- **Composition**: The mixin composes the alert behavior into any model that inherits it
+- **Discriminator-based relationship**: `@declared_attr` creates the relationship dynamically, using the type discriminator (`about_id` + `about_type`)
+- **Type extraction**: The `primaryjoin` extracts the entity type from the model name (`UserModel` → `USER`) – this is how we match alerts to the right entity
+- **Explicit loading**: `lazy='raise'` prevents N+1 queries – you MUST explicitly load alerts when you need them
+- **Encapsulation**: Helper methods encapsulate common operations, keeping the behavior's API clean
+
+The mixin is a reusable component. Add it to any model, and that model gets alert functionality. That's composition in action.
+
+### Composing Alerts into Models
 ```python
 class UserModel(BaseModel, AlertableMixin):
     __tablename__ = 'users'
@@ -101,6 +123,7 @@ class BookingModel(BaseModel, AlertableMixin):
     # ... other fields
 ```
 Done. Both models now have alerts.
+
 ```python
 # Create an alert
 booking = await booking_repo.get_booking_by_id(booking_id)
@@ -109,6 +132,7 @@ alert = booking.create_alert(
 ```
 ## Example 2: Admin Notes
 Now let's look at a different behavior with different requirements. Admins wanted to leave internal notes on various entities throughout the admin panel.
+
 ### The Note Model
 ```python
 class NoteModel(BaseModel):
@@ -121,8 +145,9 @@ class NoteModel(BaseModel):
     # Track who created the note
     admin_id: Mapped[str] = mapped_column(ForeignKey('
 ```
-Same polymorphic pattern, but with audit fields and a relationship to track who created the note.
-### The Noteable Mixin
+Same discriminator-based pattern, but with audit fields and a relationship to track who created the note.
+
+### Composing the Note Behavior
 ```python
 class NoteableMixin:
     @declared_attr
@@ -152,7 +177,8 @@ class NoteableMixin:
 - `lazy='select'` instead of `lazy='raise'` – notes are simpler, auto-loading is fine
 - `order_by='desc(NoteModel.created_at)'` – always get most recent notes first
 - `create_note()` requires `admin_id` for audit trail
-### Using the Note Mixin
+
+### Composing Notes into Models
 ```python
 class BookingModel(BaseModel, AlertableMixin, NoteableMixin):
     __tablename__ = 'bookings'
@@ -162,7 +188,7 @@ class CaptionerProfileModel(BaseModel, NoteableMixin):
     __tablename__ = 'captioner_profiles'
     # ... fields
 ```
-See that? `BookingModel` uses BOTH mixins. It can have both alerts and notes.
+See that? `BookingModel` uses BOTH mixins. It composes both behaviors – alerts and notes – independently. This is the power of composition: each behavior is a separate, reusable component you can mix and match.
 ```python
 # Admin leaves a note
 booking = await booking_repo.get_booking_by_id(booking_id)
@@ -171,7 +197,7 @@ note = booking.create_note(
     admin_id=current_
 ```
 ## Configuration Choices Matter
-Both mixins use the same polymorphic pattern, but they're configured differently because they have different needs:
+Both mixins use the same discriminator-based pattern, but they're configured differently because they have different needs:
 <table header-row="true">
 <tr>
 <td>Feature</td>
@@ -209,9 +235,11 @@ Both mixins use the same polymorphic pattern, but they're configured differently
 <td>Need to know who said what when</td>
 </tr>
 </table>
-This flexibility is the power of the mixin pattern. Same structure, different configuration.
+
+This flexibility is the power of composition. Same discriminator-based structure, different configuration per behavior. Each mixin encapsulates one concern, and you compose them together as needed.
+
 ## Other Behaviors This Pattern Unlocks
-Once you see this pattern, you start seeing it everywhere. Here are 5 more real-world use cases where the same polymorphic mixin approach works perfectly:
+Once you see this pattern, you start seeing it everywhere. Here are 5 more real-world use cases where the same discriminator-based composition approach works perfectly:
 ### 1. AttachableMixin – File Uploads on Anything
 ```python
 class AttachmentModel(BaseModel):
@@ -238,6 +266,7 @@ class TagModel(BaseModel):
     created_by_id: Mapped[str]
 ```
 **Use case**: Tag projects, tasks, customers, support tickets, blog posts. Instead of separate tagging tables for each entity, one unified system. Great for filtering, search, and cross-entity organization.
+
 ### 3. AuditableMixin – Activity Log for Everything
 ```python
 class ActivityLogModel(BaseModel):
@@ -252,6 +281,7 @@ class ActivityLogModel(BaseModel):
     ip_address: Mapped[Optional[str]]
 ```
 **Use case**: Compliance and audit trails. Track who did what to bookings, payments, user records, contracts. One unified timeline for all entity changes. GDPR and SOC2 auditors love this.
+
 ### 4. FavoritableMixin – User Bookmarks/Saves
 ```python
 class FavoriteModel(BaseModel):
@@ -262,6 +292,7 @@ class FavoriteModel(BaseModel):
     user_id: Mapped[str] = mapped_column(ForeignKey('
 ```
 **Use case**: Users can favorite articles, products, search queries, dashboard views, reports. Build a "My Favorites" page that shows everything they've saved, regardless of type. One query, heterogeneous results.
+
 ### 5. ReviewableMixin – Reviews and Ratings
 ```python
 class ReviewModel(BaseModel):
@@ -271,30 +302,51 @@ class ReviewModel(BaseModel):
     reviewed_type: Mapped[ReviewType]
     reviewer_id: Mapped[str] = mapped_column(ForeignKey('
 ```
+
 **Use case**: Marketplace where users review products, sellers, AND delivery services. One review system, different entity types. Easy to build aggregate ratings and "most helpful" sorting.
 ---
-All of these follow the same pattern: polymorphic key (`\{entity\}_id` + `\{entity\}_type`) plus behavior-specific fields. The mixin handles the relationship boilerplate, you just add the business logic.
+All of these follow the same architectural pattern: **type discriminator** (`\{entity\}_id` + `\{entity\}_type`) plus behavior-specific fields. The mixin composes the relationship boilerplate, you just add the business logic. This is composition in action – each behavior is a reusable component you can mix into any model.
+
 ## Why This Approach Works
-**Reusability**: Add `AlertableMixin` or `NoteableMixin` to any model. No code duplication.
+
+This pattern works because it's built on solid architectural principles:
+
+**Composition Over Inheritance**: Instead of creating deep inheritance hierarchies, you compose behaviors. Each mixin is a focused, single-responsibility component.
+
+**Type Discriminators**: One table per behavior that can reference any entity type. This is a database design pattern that predates SQLAlchemy – Rails calls it "polymorphic associations", Django calls it "generic relations". The concept is universal.
+
+**Reusability**: Add `AlertableMixin` or `NoteableMixin` to any model. No code duplication. Write once, use everywhere.
+
 **Type Safety**: Enums give you autocomplete and catch typos at development time.
-**Composability**: Mix and match behaviors on the same model. Need alerts AND notes? Add both mixins.
-**Maintainability**: Behavior logic lives in ONE place. Need to change how notes work? Change the mixin.
+
+**Composability**: Mix and match behaviors on the same model. Need alerts AND notes? Add both mixins. This is the real power – behaviors are independent, composable units.
+
+**Maintainability**: Behavior logic lives in ONE place. Need to change how notes work? Change the mixin. All models using it get the update automatically.
+
 **Scalability**: One table per behavior, infinite entity types. Want to add alerts to a new entity? Just add the mixin to your model class. No migration needed. The `alerts` table already handles any entity type. This is huge when you're iterating fast.
-**Zero Migration Tax**: This is worth emphasizing. With traditional approaches, adding the same behavior to a new entity means creating a new table (`contract_alerts`) and running a migration. With this pattern? Add one line (`AlertableMixin`) to your model. Done. The polymorphic table already supports it.
+
+**Zero Migration Tax**: This is worth emphasizing. With traditional approaches, adding the same behavior to a new entity means creating a new table (`contract_alerts`) and running a migration. With this pattern? Add one line (`AlertableMixin`) to your model. Done. The discriminator-based table already supports it.
 ## When NOT to Use This
 Don't use this pattern if:
 - You only have ONE entity type that needs the behavior (just use a normal relationship)
 - Your behaviors are complex and entity-specific (inheritance might be better)
-- You're adding too many mixins to one model (composition \> mixin soup)
-- You need complex queries across entity types (consider a different architecture)
-Like any pattern, mixins are a tool. Use them when they make sense.
+- You're adding too many mixins to one model (composition \> mixin soup – if you need 10+ behaviors, maybe the model is doing too much)
+- You need complex queries across entity types (discriminator-based queries can be tricky – consider a different architecture)
+- Foreign key constraints are critical (type discriminators can't use database-level foreign keys across multiple tables)
+
+Like any pattern, composition and type discriminators are tools. Use them when they make sense. The tradeoff is flexibility vs. referential integrity – discriminator-based associations give you flexibility but lose some database-level guarantees.
+
 ## Summary
-SQLAlchemy mixins let you add reusable behaviors to any model without copy-pasting code everywhere. The key is:
-1. Create a polymorphic table with `about_id` + `about_type`
-2. Use `@declared_attr` to dynamically create relationships
-3. Configure each mixin for its specific needs (`lazy`, `order_by`, etc.)
-4. Add helper methods that encapsulate common operations
-5. Compose multiple mixins on the same model when needed
-Rails developers aren't the only ones who can have nice things.
----
-**What behaviors have you made reusable in your codebase?** Drop a comment – I'm always looking for new patterns to steal.
+
+This pattern combines two powerful concepts: **type discriminators** (a database design pattern) and **composition** (an architectural pattern). The result is reusable, composable behaviors that eliminate copy-paste.
+
+The key steps:
+1. **Design a discriminator-based table** with `about_id` + `about_type` (the type discriminator)
+2. **Create a mixin** that composes the behavior using `@declared_attr` to dynamically create relationships
+3. **Configure each mixin** for its specific needs (`lazy`, `order_by`, etc.)
+4. **Add helper methods** that encapsulate common operations
+5. **Compose multiple mixins** on the same model when needed
+
+This isn't SQLAlchemy magic – it's composition and type discriminators. Rails has `polymorphic: true`, Django has `GenericForeignKey`, and you can build this pattern in any ORM or even raw SQL. The SQLAlchemy implementation is just one way to express it.
+
+The real value? You're building reusable, composable components instead of copy-pasting code. That's good architecture, regardless of your ORM.
