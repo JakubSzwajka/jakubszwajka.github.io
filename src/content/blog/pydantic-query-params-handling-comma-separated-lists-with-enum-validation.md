@@ -1,6 +1,6 @@
 ---
 title: 'Pydantic Query Params: Handling Comma-Separated Lists with Enum Validation'
-description: '## Problem'
+description: 'How to handle comma-separated query parameters with proper enum validation in FastAPI using Pydantic BeforeValidator. Clean solution for converting "ACTIVE,PENDING" strings into typed enum lists.'
 pubDate: 'July 1, 2025'
 tags: ['Patterns', 'Python']
 ---

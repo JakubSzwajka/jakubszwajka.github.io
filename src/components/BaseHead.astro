@@ -21,6 +21,9 @@ const { title, description, image = FallbackImage } = Astro.props;
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1" />
 <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+<link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
+<link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png" />
+<link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png" />
 <link rel="sitemap" href="/sitemap-index.xml" />
 <link
 	rel="alternate"
@@ -59,6 +62,30 @@ const { title, description, image = FallbackImage } = Astro.props;
 <meta property="twitter:title" content={title} />
 <meta property="twitter:description" content={description} />
 <meta property="twitter:image" content={new URL(image.src, Astro.url)} />
+
+<!-- Structured Data (JSON-LD) -->
+<script type="application/ld+json" is:inline>
+{
+  "@context": "https://schema.org",
+  "@type": "Person",
+  "name": "Kuba Szwajka",
+  "alternateName": "Jakub Szwajka",
+  "url": "https://kubaszwajka.com",
+  "jobTitle": "Software Architect",
+  "description": "Software Architect based in Wrocław, Poland. Specializing in EdTech, FinTech, and modular architecture.",
+  "address": {
+    "@type": "PostalAddress",
+    "addressLocality": "Wroclaw",
+    "addressCountry": "Poland"
+  },
+  "email": "szwajkajakub@gmail.com",
+  "sameAs": [
+    "https://github.com/JakubSzwajka",
+    "https://www.linkedin.com/in/jakub-szwajka/",
+    "https://medium.com/@szwajkajakub"
+  ]
+}
+</script>
 
 <!-- Google Analytics -->
 {import.meta.env.PUBLIC_GA_ID && import.meta.env.PROD && (
