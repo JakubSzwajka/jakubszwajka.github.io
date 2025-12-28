@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Branding Template Generator</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&family=Space+Grotesk:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            margin: 0;
+            padding: 20px;
+            background: #0d0d0d;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 20px;
+            font-family: 'JetBrains Mono', monospace;
+        }
+
+        #canvas {
+            border: 2px solid #333333;
+            cursor: crosshair;
+        }
+
+        .controls {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            max-width: 1200px;
+        }
+
+        button, input {
+            background: #ccff00;
+            border: none;
+            padding: 12px 24px;
+            font-family: 'JetBrains Mono', monospace;
+            font-weight: 700;
+            cursor: pointer;
+            text-transform: uppercase;
+            font-size: 14px;
+        }
+
+        button:hover {
+            opacity: 0.9;
+        }
+
+        input {
+            flex: 1;
+            min-width: 300px;
+        }
+
+        .info {
+            color: #e0e0e0;
+            max-width: 1200px;
+            font-size: 12px;
+        }
+    </style>
+</head>
+<body>
+    <canvas id="canvas" width="1200" height="630"></canvas>
+
+    <div class="controls">
+        <input type="text" id="titleInput" placeholder="Enter blog post title (optional)">
+        <button onclick="updateCanvas()">Update</button>
+        <button onclick="downloadImage()">Download PNG</button>
+    </div>
+
+    <div class="info">
+        Click and drag on the canvas to position the title text. Template size: 1200x630px (optimized for social media)
+    </div>
+
+    <script>
+        const canvas = document.getElementById('canvas');
+        const ctx = canvas.getContext('2d');
+        const titleInput = document.getElementById('titleInput');
+
+        let titlePosition = { x: 600, y: 315 }; // Center by default
+        let isDragging = false;
+        let fontsLoaded = false;
+
+        // Load fonts and ensure they're ready
+        async function loadFonts() {
+            try {
+                await document.fonts.load('bold 20px "Space Grotesk"');
+                await document.fonts.load('bold 36px "Space Grotesk"');
+                await document.fonts.load('bold 48px "Space Grotesk"');
+                fontsLoaded = true;
+                drawCanvas();
+            } catch (error) {
+                console.error('Font loading error:', error);
+                // Draw anyway with fallback fonts
+                fontsLoaded = true;
+                drawCanvas();
+            }
+        }
+
+        // Start loading fonts immediately
+        window.addEventListener('load', () => {
+            if (document.fonts && document.fonts.ready) {
+                document.fonts.ready.then(loadFonts);
+            } else {
+                // Fallback if fonts API not available
+                setTimeout(loadFonts, 100);
+            }
+        });
+
+        function drawCanvas() {
+            const width = canvas.width;
+            const height = canvas.height;
+
+            // Background
+            ctx.fillStyle = '#0d0d0d';
+            ctx.fillRect(0, 0, width, height);
+
+            // Grid pattern
+            ctx.strokeStyle = 'rgba(255, 255, 255, 0.05)';
+            ctx.lineWidth = 1;
+
+            const gridSize = 40;
+
+            // Vertical lines
+            for (let x = 0; x <= width; x += gridSize) {
+                ctx.beginPath();
+                ctx.moveTo(x, 0);
+                ctx.lineTo(x, height);
+                ctx.stroke();
+            }
+
+            // Horizontal lines
+            for (let y = 0; y <= height; y += gridSize) {
+                ctx.beginPath();
+                ctx.moveTo(0, y);
+                ctx.lineTo(width, y);
+                ctx.stroke();
+            }
+
+            // Draw logo and name in top-left corner
+            drawBranding();
+
+            // Draw title if provided
+            const title = titleInput.value;
+            if (title) {
+                drawTitle(title);
+            }
+        }
+
+        function drawBranding() {
+            if (!fontsLoaded) return;
+
+            const logoX = 30;
+            const logoY = 30;
+            const color = '#ccff00';
+            const fontSize = 20;
+
+            ctx.fillStyle = color;
+            ctx.font = `bold ${fontSize}px Space Grotesk`;
+            ctx.textBaseline = 'top';
+
+            // Draw {K} logo
+            const logoText = '{K}';
+            ctx.fillText(logoText, logoX, logoY);
+
+            const logoWidth = ctx.measureText(logoText).width;
+
+            // Draw name right next to logo (same size)
+            ctx.fillText('KUBA SZWAJKA', logoX + logoWidth + 15, logoY);
+
+            // Reset baseline
+            ctx.textBaseline = 'alphabetic';
+        }
+
+        function drawTitle(text) {
+            if (!fontsLoaded) return;
+
+            ctx.fillStyle = '#ccff00';
+            ctx.font = 'bold 48px Space Grotesk';
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'middle';
+
+            // Word wrap
+            const maxWidth = 800;
+            const words = text.split(' ');
+            const lines = [];
+            let currentLine = '';
+
+            words.forEach(word => {
+                const testLine = currentLine + (currentLine ? ' ' : '') + word;
+                const metrics = ctx.measureText(testLine);
+
+                if (metrics.width > maxWidth && currentLine) {
+                    lines.push(currentLine);
+                    currentLine = word;
+                } else {
+                    currentLine = testLine;
+                }
+            });
+
+            if (currentLine) {
+                lines.push(currentLine);
+            }
+
+            // Draw each line
+            const lineHeight = 60;
+            const startY = titlePosition.y - ((lines.length - 1) * lineHeight / 2);
+
+            lines.forEach((line, index) => {
+                ctx.fillText(line, titlePosition.x, startY + (index * lineHeight));
+            });
+
+            // Reset text alignment
+            ctx.textAlign = 'start';
+            ctx.textBaseline = 'alphabetic';
+        }
+
+        function updateCanvas() {
+            drawCanvas();
+        }
+
+        function downloadImage() {
+            const link = document.createElement('a');
+            const timestamp = new Date().getTime();
+            link.download = `branding-${timestamp}.png`;
+            link.href = canvas.toDataURL();
+            link.click();
+        }
+
+        // Canvas interaction for dragging title
+        canvas.addEventListener('mousedown', (e) => {
+            const rect = canvas.getBoundingClientRect();
+            const x = e.clientX - rect.left;
+            const y = e.clientY - rect.top;
+
+            // Check if clicked near title position
+            const distance = Math.sqrt(
+                Math.pow(x - titlePosition.x, 2) +
+                Math.pow(y - titlePosition.y, 2)
+            );
+
+            if (distance < 100 || !titleInput.value) {
+                isDragging = true;
+                titlePosition = { x, y };
+                drawCanvas();
+            }
+        });
+
+        canvas.addEventListener('mousemove', (e) => {
+            if (isDragging) {
+                const rect = canvas.getBoundingClientRect();
+                titlePosition = {
+                    x: e.clientX - rect.left,
+                    y: e.clientY - rect.top
+                };
+                drawCanvas();
+            }
+        });
+
+        canvas.addEventListener('mouseup', () => {
+            isDragging = false;
+        });
+
+        canvas.addEventListener('mouseleave', () => {
+            isDragging = false;
+        });
+
+        // Update on input
+        titleInput.addEventListener('input', updateCanvas);
+    </script>
+</body>
+</html>
