@@ -7,6 +7,7 @@ import MainNav from '../components/MainNav.astro';
 type Props = CollectionEntry<'blog'>['data'] & { id: string };
 
 const { title, description, pubDate, updatedDate, tags, id } = Astro.props;
+const ogImage = `/og/${id}.png`;
 
 // Format date for display
 function formatDate(date: Date): string {
@@ -20,7 +21,7 @@ function formatDate(date: Date): string {
 
 <html lang="en">
 	<head>
-		<BaseHead title={title} description={description} />
+		<BaseHead title={title} description={description} ogImage={ogImage} />
 	</head>
 
 	<body>
