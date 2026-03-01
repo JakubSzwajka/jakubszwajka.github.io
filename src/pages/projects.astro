@@ -4,12 +4,11 @@ import Footer from '../components/Footer.astro';
 import MainNav from '../components/MainNav.astro';
 import { SITE_TITLE } from '../consts';
 
-// Portfolio items data structure
 const portfolioItems = [
 	{
 		id: 1,
 		title: 'MyDanceDNA',
-		description: 'A directory platform for dancers, solving the problem of scattered information about dance classes. Users can search for schools, instructors, and courses, filtering by dance style, location, skill level, or price. A rating and review system helps users choose the right classes. Built from concept to production deployment. Fullstack: Python, FastAPI, React, PostgreSQL. Custom data aggregation and content moderation system.',
+		description: 'Directory platform for dancers — search schools, instructors, and courses by style, location, or price.',
 		link: 'https://www.mydancedna.com',
 		image: '/projects/mydancedna/hero.png',
 		screenshots: [
@@ -27,146 +26,84 @@ const portfolioItems = [
 	<head>
 		<BaseHead
 			title={`Projects // ${SITE_TITLE}`}
-			description="Selected projects and portfolio work by Kuba Szwajka"
+			description="Selected projects by Kuba Szwajka"
 		/>
 	</head>
 	<body>
 		<div class="wrapper">
 			<MainNav />
 
-			<!-- CONTENT AREA -->
 			<main class="content-area">
-				<section class="intro">
-					<p>Here's a selection of projects I've built—ranging from full-scale platform development to experimental side projects. Each one represents a different challenge in shipping fast while maintaining architectural integrity.</p>
-				</section>
-
-				<!-- PORTFOLIO GRID -->
-				<section class="portfolio-section">
-					{portfolioItems.map((item) => (
-						<article class="project-card">
-							<div class="project-image-container">
-								{/* Main hero image or carousel */}
-								{item.screenshots && item.screenshots.length > 0 ? (
-									<div class="carousel" data-carousel={`carousel-${item.id}`}>
-										<div class="carousel-inner">
-											{item.screenshots.map((screenshot, index) => (
-												<img
-													src={screenshot}
-													alt={`${item.title} screenshot ${index + 1}`}
-													class={`carousel-image ${index === 0 ? 'active' : ''}`}
-												/>
+				{portfolioItems.map((item) => (
+					<article class="project">
+						<div class="project-image-container">
+							{item.screenshots && item.screenshots.length > 0 ? (
+								<div class="carousel" data-carousel={`carousel-${item.id}`}>
+									<div class="carousel-inner">
+										{item.screenshots.map((screenshot, index) => (
+											<img
+												src={screenshot}
+												alt={`${item.title} screenshot ${index + 1}`}
+												class={`carousel-image ${index === 0 ? 'active' : ''}`}
+											/>
+										))}
+									</div>
+									{item.screenshots.length > 1 && (
+										<div class="carousel-dots">
+											{item.screenshots.map((_, index) => (
+												<button
+													class={`carousel-dot ${index === 0 ? 'active' : ''}`}
+													data-index={index}
+													aria-label={`View screenshot ${index + 1}`}
+												></button>
 											))}
 										</div>
-										{item.screenshots.length > 1 && (
-											<div class="carousel-dots">
-												{item.screenshots.map((_, index) => (
-													<button
-														class={`carousel-dot ${index === 0 ? 'active' : ''}`}
-														data-index={index}
-														aria-label={`View screenshot ${index + 1}`}
-													></button>
-												))}
-											</div>
-										)}
-									</div>
-								) : (
-									<img
-										src={item.image}
-										alt={item.title}
-										class="project-image"
-									/>
-								)}
-
-								{/* Overlay only if project has a link */}
-								{item.link && (
-									<div class="project-overlay">
-										<a href={item.link} target="_blank" class="view-project-link">
-											View Project →
-										</a>
-									</div>
-								)}
-							</div>
-
-							<div class="project-content">
-								<div class="tags">
-									{item.tags.map((tag) => (
-										<span class="tag">{tag}</span>
-									))}
+									)}
 								</div>
+							) : (
+								<img src={item.image} alt={item.title} class="project-image" />
+							)}
+						</div>
 
-								<h3>
-									{item.icon && <img src={item.icon} alt="" class="project-icon" />}
-									{item.title}
-								</h3>
-								<p>{item.description}</p>
-
-								{/* Show link button only if project has a link */}
+						<div class="project-info">
+							<h3>
 								{item.link ? (
-									<a href={item.link} target="_blank" class="btn-arrow">
-										View Project →
-									</a>
+									<a href={item.link} target="_blank">{item.title} →</a>
 								) : (
-									<span class="btn-private">Private Project</span>
+									item.title
 								)}
+							</h3>
+							<p>{item.description}</p>
+							<div class="tags">
+								{item.tags.map((tag) => (
+									<span class="tag">{tag}</span>
+								))}
 							</div>
-						</article>
-					))}
-				</section>
-
-				<!-- CTA SECTION -->
-				<section class="cta-section">
-					<div class="cta-box">
-						<h2>Want to build something together?</h2>
-						<a href="mailto:szwajkajakub@gmail.com" class="cta-button">
-							Email me 💌
-						</a>
-					</div>
-				</section>
+						</div>
+					</article>
+				))}
 			</main>
 
 			<Footer />
 		</div>
 
 		<script>
-			// Carousel functionality
 			document.addEventListener('DOMContentLoaded', () => {
 				const carousels = document.querySelectorAll('.carousel');
-
 				carousels.forEach((carousel) => {
 					const images = carousel.querySelectorAll('.carousel-image');
 					const dots = carousel.querySelectorAll('.carousel-dot');
-
-					if (images.length <= 1) return; // Skip if only one image
-
+					if (images.length <= 1) return;
 					let currentIndex = 0;
-
-					// Dot click handler
 					dots.forEach((dot, index) => {
 						dot.addEventListener('click', () => {
-							// Remove active class from all
 							images[currentIndex].classList.remove('active');
 							dots[currentIndex].classList.remove('active');
-
-							// Add active class to clicked
 							currentIndex = index;
 							images[currentIndex].classList.add('active');
 							dots[currentIndex].classList.add('active');
 						});
 					});
-
-					// Optional: Auto-advance carousel
-					// Uncomment if you want auto-rotation
-					/*
-					setInterval(() => {
-						images[currentIndex].classList.remove('active');
-						dots[currentIndex].classList.remove('active');
-
-						currentIndex = (currentIndex + 1) % images.length;
-
-						images[currentIndex].classList.add('active');
-						dots[currentIndex].classList.add('active');
-					}, 5000); // Change image every 5 seconds
-					*/
 				});
 			});
 		</script>
@@ -174,97 +111,28 @@ const portfolioItems = [
 </html>
 
 <style>
-	/* PAGE HEADER - Following existing pattern */
-	.page-header {
-		padding: 4rem 2rem 2rem;
-		border-bottom: 2px solid var(--text-main);
-	}
-
-	@media (min-width: 900px) {
-		.page-header {
-			padding: 4rem;
-		}
-	}
-
-	.back-link {
-		color: var(--text-dim);
-		text-decoration: none;
-		font-size: 0.9rem;
-		text-transform: uppercase;
-		display: inline-block;
-		margin-bottom: 2rem;
-		transition: color 0.2s;
-	}
-
-	.back-link:hover {
-		color: var(--accent);
-	}
-
-	.subtitle {
-		color: var(--accent);
-		font-size: 1.1rem;
-		text-transform: uppercase;
-		margin: 0;
-	}
-
-	/* CONTENT AREA */
 	.content-area {
-		padding: 3rem 2rem;
-	}
-
-	@media (min-width: 900px) {
-		.content-area {
-			padding: 4rem;
-		}
-	}
-
-	section {
-		margin-bottom: 4rem;
-	}
-
-	/* INTRO */
-	.intro p {
-		font-size: 1.2rem;
-		color: var(--text-dim);
-		line-height: 1.8;
+		padding: 2rem;
 		max-width: 800px;
+		margin: 0 auto;
 	}
 
-	/* PROJECT CARDS - Grid Layout */
-	.portfolio-section {
-		display: grid;
-		grid-template-columns: 1fr;
-		gap: 3rem;
+	.project {
+		margin-bottom: 3rem;
 	}
 
-	.project-card {
-		border: 1px solid var(--border-color);
-		background: var(--bg-panel);
-		transition: border-color 0.3s;
-	}
-
-	.project-card:hover {
-		border-color: var(--accent);
-	}
-
-	/* PROJECT IMAGE */
 	.project-image-container {
 		position: relative;
 		width: 100%;
 		aspect-ratio: 16 / 10;
 		overflow: hidden;
-		border-bottom: 1px solid var(--border-color);
+		margin-bottom: 1rem;
 	}
 
 	.project-image {
 		width: 100%;
 		height: 100%;
 		object-fit: cover;
-		transition: transform 0.3s ease;
-	}
-
-	.project-card:hover .project-image {
-		transform: scale(1.05);
 	}
 
 	/* CAROUSEL */
@@ -288,7 +156,7 @@ const portfolioItems = [
 		top: 0;
 		left: 0;
 		opacity: 0;
-		transition: opacity 0.5s ease-in-out;
+		transition: opacity 0.4s ease;
 	}
 
 	.carousel-image.active {
@@ -298,190 +166,66 @@ const portfolioItems = [
 
 	.carousel-dots {
 		position: absolute;
-		bottom: 1rem;
+		bottom: 0.75rem;
 		left: 50%;
 		transform: translateX(-50%);
 		display: flex;
-		gap: 0.5rem;
-		z-index: 10;
+		gap: 0.4rem;
 	}
 
 	.carousel-dot {
-		width: 10px;
-		height: 10px;
+		width: 8px;
+		height: 8px;
 		border-radius: 50%;
-		border: 2px solid var(--accent);
+		border: 1px solid var(--text-dim);
 		background: transparent;
 		cursor: pointer;
-		transition: background 0.2s;
 		padding: 0;
+		transition: background 0.2s;
 	}
 
 	.carousel-dot.active {
 		background: var(--accent);
+		border-color: var(--accent);
 	}
 
-	.carousel-dot:hover {
-		background: var(--accent);
-		opacity: 0.7;
-	}
-
-	/* PROJECT OVERLAY */
-	.project-overlay {
-		position: absolute;
-		top: 0;
-		left: 0;
-		right: 0;
-		bottom: 0;
-		background: rgba(0, 0, 0, 0.8);
-		display: flex;
-		align-items: center;
-		justify-content: center;
-		opacity: 0;
-		transition: opacity 0.3s ease;
-	}
-
-	.project-card:hover .project-overlay {
-		opacity: 1;
-	}
-
-	.view-project-link {
-		color: var(--accent);
+	/* PROJECT INFO */
+	.project-info h3 {
 		font-family: 'Space Grotesk', sans-serif;
-		font-size: 1.2rem;
-		font-weight: 700;
-		text-transform: uppercase;
+		font-size: 1.1rem;
+		margin-bottom: 0.5rem;
+	}
+
+	.project-info h3 a {
+		color: var(--text-main);
 		text-decoration: none;
-		border: 2px solid var(--accent);
-		padding: 1rem 2rem;
-		transition: all 0.2s;
+		transition: color 0.15s;
 	}
 
-	.view-project-link:hover {
-		background: var(--accent);
-		color: black;
+	.project-info h3 a:hover {
+		color: var(--accent);
 	}
 
-	/* PROJECT CONTENT */
-	.project-content {
-		padding: 2rem;
+	.project-info p {
+		color: var(--text-dim);
+		font-size: 0.9rem;
+		line-height: 1.6;
+		margin-bottom: 0.75rem;
 	}
 
 	.tags {
 		display: flex;
 		flex-wrap: wrap;
-		gap: 0.5rem;
-		margin-bottom: 1rem;
+		gap: 0.4rem;
 	}
 
 	.tag {
-		border: 1px solid var(--border-color);
-		padding: 4px 8px;
 		font-size: 0.7rem;
 		color: var(--text-dim);
-		text-transform: uppercase;
 	}
 
-	.project-content h3 {
-		font-family: 'Space Grotesk', sans-serif;
-		font-size: 1.5rem;
-		margin-bottom: 1rem;
-		line-height: 1.2;
-		color: var(--text-main);
-		display: flex;
-		align-items: center;
-		gap: 0.75rem;
-	}
-
-	.project-icon {
-		width: 32px;
-		height: 32px;
-		object-fit: contain;
-	}
-
-	.project-content p {
-		color: var(--text-dim);
-		margin-bottom: 1.5rem;
-		line-height: 1.7;
-		font-size: 0.95rem;
-	}
-
-	.btn-arrow {
-		color: var(--accent);
-		text-decoration: none;
-		font-weight: 700;
-		text-transform: uppercase;
-		font-size: 0.9rem;
-		border-bottom: 2px solid transparent;
-		transition: border-color 0.2s;
-	}
-
-	.btn-arrow:hover {
-		border-bottom: 2px solid var(--accent);
-		text-decoration: none;
-	}
-
-	.btn-private {
-		color: var(--text-dim);
-		font-weight: 700;
-		text-transform: uppercase;
-		font-size: 0.9rem;
-		font-style: italic;
-		border-left: 3px solid var(--text-dim);
-		padding-left: 0.75rem;
-		display: inline-block;
-	}
-
-	/* CTA SECTION - Following work-with-me pattern */
-	.cta-section {
-		margin-top: 5rem;
-	}
-
-	.cta-box {
-		border: 2px solid var(--border-color);
-		border-left: 4px solid var(--accent);
-		padding: 3rem;
-		background: var(--bg-panel);
-		text-align: center;
-	}
-
-	.cta-box h2 {
-		font-family: 'Space Grotesk', sans-serif;
-		font-size: 2rem;
-		margin-bottom: 1rem;
-		color: var(--text-main);
-	}
-
-	.cta-box p {
-		color: var(--text-dim);
-		margin-bottom: 2rem;
-		font-size: 1.1rem;
-	}
-
-	.cta-button {
-		display: inline-block;
-		background: var(--accent);
-		color: black;
-		padding: 1rem 2rem;
-		text-decoration: none;
-		font-weight: 700;
-		text-transform: uppercase;
-		transition: opacity 0.2s;
-		font-family: 'Space Grotesk', sans-serif;
-	}
-
-	.cta-button:hover {
-		opacity: 0.9;
-		text-decoration: none;
-	}
-
-	@media (max-width: 600px) {
-		.cta-box {
-			padding: 2rem;
-		}
-
-		.cta-box h2 {
-			font-size: 1.5rem;
-		}
+	.tag:not(:last-child)::after {
+		content: '·';
+		margin-left: 0.4rem;
 	}
 </style>

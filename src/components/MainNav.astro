@@ -1,5 +1,5 @@
 ---
-import { GITHUB_URL, LINKEDIN_URL, EMAIL } from '../consts';
+import { GITHUB_URL, LINKEDIN_URL, TWITTER_URL, EMAIL } from '../consts';
 const currentPath = Astro.url.pathname;
 ---
 
@@ -18,6 +18,9 @@ const currentPath = Astro.url.pathname;
 		</a>
 		<a href={LINKEDIN_URL} class="nav-social" target="_blank">
 			<i class="ph-bold ph-linkedin-logo"></i> LinkedIn
+		</a>
+		<a href={TWITTER_URL} class="nav-social" target="_blank">
+			<i class="ph-bold ph-x-logo"></i> X
 		</a>
 		<a href={`mailto:${EMAIL}`} class="nav-social">
 			<i class="ph-bold ph-envelope-simple"></i> Email

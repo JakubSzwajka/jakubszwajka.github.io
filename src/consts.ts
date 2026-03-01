@@ -7,4 +7,5 @@ export const SITE_DESCRIPTION = 'Software Architect based in Wrocław. Focusing 
 // Social links
 export const GITHUB_URL = 'https://github.com/JakubSzwajka';
 export const LINKEDIN_URL = 'https://www.linkedin.com/in/jakub-szwajka/';
+export const TWITTER_URL = 'https://x.com/Kuba_Szw';
 export const EMAIL = 'szwajkajakub@gmail.com';
