@@ -1,24 +1,28 @@
 ---
 import BaseHead from '../components/BaseHead.astro';
 import Footer from '../components/Footer.astro';
-import Header from '../components/Header.astro';
 import MainNav from '../components/MainNav.astro';
 import { SITE_DESCRIPTION, SITE_TITLE, EMAIL } from '../consts';
 import { getCollection } from 'astro:content';
 
-// Get all blog posts sorted by date (newest first)
 const posts = (await getCollection('blog'))
-	.sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf())
-	.slice(0, 15);
+	.sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf());
 
-// Format date for display
 function formatDate(date: Date): string {
 	return date.toLocaleDateString('en-US', {
 		day: '2-digit',
 		month: 'short',
-		year: 'numeric'
 	}).toUpperCase().replace(',', '');
 }
+
+const postsByYear = posts.reduce((acc, post) => {
+	const year = post.data.pubDate.getFullYear();
+	if (!acc[year]) acc[year] = [];
+	acc[year].push(post);
+	return acc;
+}, {} as Record<number, typeof posts>);
+
+const years = Object.keys(postsByYear).sort((a, b) => Number(b) - Number(a));
 ---
 
 <!doctype html>
@@ -28,6 +32,8 @@ function formatDate(date: Date): string {
 	</head>
 	<body>
 		<div class="wrapper">
+			<MainNav />
+
 			<!-- HERO SECTION -->
 			<header class="hero">
 				<div class="hero-info">
@@ -38,26 +44,21 @@ function formatDate(date: Date): string {
 				</div>
 			</header>
 
-			<!-- MAIN NAVIGATION -->
-			<MainNav />
-
-			<!-- NAV STRIP -->
-			<Header />
-
 			<!-- BLOG ENTRIES -->
 			<main class="content-area">
 				<h2 class="section-label">01. LOGS</h2>
 
-				{posts.map((post) => (
-					<a href={`/blog/${post.id}/`} class="entry">
-						<span class="entry-date">{formatDate(post.data.pubDate)}</span>
-						<span class="entry-title">{post.data.title}</span>
-					</a>
+				{years.map((year) => (
+					<section class="year-group">
+						<h3 class="year-label">{year}</h3>
+						{postsByYear[Number(year)].map((post) => (
+							<a href={`/blog/${post.id}/`} class="entry">
+								<span class="entry-date">{formatDate(post.data.pubDate)}</span>
+								<span class="entry-title">{post.data.title}</span>
+							</a>
+						))}
+					</section>
 				))}
-
-				<div class="view-all">
-					<a href="/blog" class="btn-arrow">View All Posts -&gt;</a>
-				</div>
 			</main>
 
 			<Footer />
@@ -68,13 +69,12 @@ function formatDate(date: Date): string {
 <style>
 	/* --- HERO SECTION --- */
 	.hero {
-		border-bottom: 2px solid var(--text-main);
-		padding: 4rem 2rem;
+		padding: 3rem 2rem;
 	}
 
 	@media (min-width: 900px) {
 		.hero {
-			padding: 6rem 4rem;
+			padding: 4rem;
 		}
 	}
 
@@ -136,17 +136,14 @@ function formatDate(date: Date): string {
 		font-size: 0.95rem;
 	}
 
-	.view-all {
-		margin-top: 1.5rem;
+	.year-group {
+		margin-bottom: 2rem;
 	}
 
-	.view-all a {
-		color: var(--text-dim);
-		text-decoration: none;
+	.year-label {
+		font-family: 'Space Grotesk', sans-serif;
 		font-size: 0.85rem;
-	}
-
-	.view-all a:hover {
-		color: var(--accent);
+		color: var(--text-dim);
+		margin-bottom: 0.5rem;
 	}
 </style>

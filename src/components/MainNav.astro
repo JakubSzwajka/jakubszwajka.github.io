@@ -1,20 +1,28 @@
 ---
+import { GITHUB_URL, LINKEDIN_URL, EMAIL } from '../consts';
 const currentPath = Astro.url.pathname;
 ---
 
 <nav class="main-nav">
-	<a href="/" class={`nav-item ${currentPath === '/' ? 'active' : ''}`}>
-		Home
-	</a>
-	<a href="/blog" class={`nav-item ${currentPath.startsWith('/blog') ? 'active' : ''}`}>
-		Blog
-	</a>
-	<a href="/projects" class={`nav-item ${currentPath === '/projects' ? 'active' : ''}`}>
-		Projects
-	</a>
-	<a href="/work-with-me" class={`nav-item ${currentPath === '/work-with-me' ? 'active' : ''}`}>
-		Work With Me
-	</a>
+	<div class="nav-links">
+		<a href="/" class={`nav-item ${currentPath === '/' ? 'active' : ''}`}>
+			Home
+		</a>
+		<a href="/projects" class={`nav-item ${currentPath === '/projects' ? 'active' : ''}`}>
+			Projects
+		</a>
+	</div>
+	<div class="nav-socials">
+		<a href={GITHUB_URL} class="nav-social" target="_blank">
+			<i class="ph-bold ph-github-logo"></i> GitHub
+		</a>
+		<a href={LINKEDIN_URL} class="nav-social" target="_blank">
+			<i class="ph-bold ph-linkedin-logo"></i> LinkedIn
+		</a>
+		<a href={`mailto:${EMAIL}`} class="nav-social">
+			<i class="ph-bold ph-envelope-simple"></i> Email
+		</a>
+	</div>
 </nav>
 
 <style>
@@ -22,17 +30,49 @@ const currentPath = Astro.url.pathname;
 		border-bottom: 2px solid var(--text-main);
 		padding: 1.5rem 2rem;
 		display: flex;
-		gap: 3rem;
+		justify-content: space-between;
+		align-items: center;
 		font-family: 'Space Grotesk', sans-serif;
 		font-size: 1rem;
 		text-transform: uppercase;
 		letter-spacing: 1px;
+		width: 100vw;
+		position: relative;
+		left: 50%;
+		transform: translateX(-50%);
 	}
 
 	@media (min-width: 900px) {
 		.main-nav {
 			padding: 1.5rem 4rem;
 		}
+	}
+
+	.nav-links {
+		display: flex;
+		gap: 3rem;
+	}
+
+	.nav-socials {
+		display: flex;
+		gap: 2rem;
+		font-size: 0.85rem;
+	}
+
+	.nav-social {
+		text-decoration: none;
+		color: var(--text-dim);
+		transition: color 0.2s;
+		white-space: nowrap;
+	}
+
+	.nav-social:hover {
+		color: var(--accent);
+		text-decoration: none;
+	}
+
+	.nav-social i {
+		margin-right: 4px;
 	}
 
 	.nav-item {
@@ -65,10 +105,15 @@ const currentPath = Astro.url.pathname;
 	@media (max-width: 600px) {
 		.main-nav {
 			padding: 1rem;
-			gap: 1.5rem;
 			font-size: 0.85rem;
-			overflow-x: auto;
-			white-space: nowrap;
+		}
+
+		.nav-links {
+			gap: 1.5rem;
+		}
+
+		.nav-socials {
+			display: none;
 		}
 	}
 </style>
