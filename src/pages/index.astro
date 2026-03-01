@@ -9,7 +9,7 @@ import { getCollection } from 'astro:content';
 // Get all blog posts sorted by date (newest first)
 const posts = (await getCollection('blog'))
 	.sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf())
-	.slice(0, 5); // Show only 5 most recent on homepage
+	.slice(0, 15);
 
 // Format date for display
 function formatDate(date: Date): string {
@@ -32,40 +32,9 @@ function formatDate(date: Date): string {
 			<header class="hero">
 				<div class="hero-info">
 					<h1 class="glitch-hover">KUBA<br>SZWAJKA</h1>
-
 					<p class="hero-description">
-						<strong>Welcome. I'm Kuba</strong>
+						Software engineer based in Wroclaw. I build things for early-stage startups and write about what I learn along the way.
 					</p>
-					<p class="hero-description">
-						I help early-stage founders turn messy ideas into working software—without hiring a full-time CTO.
-					</p>
-					<p class="hero-description">
-						Based in <strong>Wroclaw, Poland</strong>. I love the chaos of 0-to-1: the whiteboard sessions, the "figure it out as we go," the tight deadlines.
-					</p>
-					<p class="hero-description">
-						Give me a messy problem, a whiteboard, and a tight deadline—that's when I'm happiest. I've spent the last 5 years jumping into early-stage projects where everything needs to be figured out: <strong>EdTech platforms</strong>, <strong>FinTech marketplaces</strong>, <strong>real-time captioning systems</strong>.
-					</p>
-					<p class="hero-description">
-						The pattern I keep coming back to? Founders who need someone to translate "here's what we want to build" into "here's what's actually running in production." That means asking hard questions about priorities, gathering requirements when planning is weak, making architectural decisions that keep things flexible, and shipping fast.
-					</p>
-					<p class="hero-description">
-						I care deeply about two things: <strong>shipping fast</strong> and <strong>not creating a mess</strong>. Those shouldn't be opposites, but somehow they often are. I use Domain-Driven Design to keep architecture flexible (because you'll pivot as you learn from users). I use modern AI-assisted workflows to ship faster without sacrificing quality. And I think most technical decisions are actually business decisions in disguise.
-					</p>
-					<p class="hero-description">
-						When I'm not building software, I'm writing about what actually works when you're moving fast.
-					</p>
-
-					<a href="/work-with-me" class="cta-button">
-						Let's see if we're a good match
-					</a>
-				</div>
-
-				<div class="image-frame">
-					<img
-						src="https://avatars.githubusercontent.com/u/43633894?s=400&u=960d45f0f4e069efde564b3121e882115f88d49d&v=4"
-						alt="Kuba Szwajka"
-						class="profile-pic"
-					/>
 				</div>
 			</header>
 
@@ -79,24 +48,11 @@ function formatDate(date: Date): string {
 			<main class="content-area">
 				<h2 class="section-label">01. LOGS</h2>
 
-				{posts.map((post, index) => (
-					<article class={`entry ${index === posts.length - 1 ? 'last' : ''}`}>
-						<div class="meta">
-							<span>// {formatDate(post.data.pubDate)}</span>
-							{post.data.tags && post.data.tags.length > 0 && (
-								<div class="tags">
-									{post.data.tags.map((tag) => (
-										<span class="tag">{tag.toUpperCase()}</span>
-									))}
-								</div>
-							)}
-						</div>
-						<div class="entry-content">
-							<h3>{post.data.title}</h3>
-							<p>{post.data.description}</p>
-							<a href={`/blog/${post.id}/`} class="btn-arrow">Read File -&gt;</a>
-						</div>
-					</article>
+				{posts.map((post) => (
+					<a href={`/blog/${post.id}/`} class="entry">
+						<span class="entry-date">{formatDate(post.data.pubDate)}</span>
+						<span class="entry-title">{post.data.title}</span>
+					</a>
 				))}
 
 				<div class="view-all">
@@ -114,34 +70,23 @@ function formatDate(date: Date): string {
 	.hero {
 		border-bottom: 2px solid var(--text-main);
 		padding: 4rem 2rem;
-		display: grid;
-		grid-template-columns: 1fr;
-		gap: 3rem;
 	}
 
 	@media (min-width: 900px) {
 		.hero {
-			grid-template-columns: 1.5fr 1fr;
-			align-items: center;
 			padding: 6rem 4rem;
 		}
 	}
 
 	.hero-info h1 {
 		font-family: 'Space Grotesk', sans-serif;
-		font-size: 4.5rem;
+		font-size: 1.5rem;
 		font-weight: 700;
-		line-height: 0.9;
+		line-height: 1;
 		text-transform: uppercase;
-		margin-bottom: 1.5rem;
-		letter-spacing: -2px;
+		margin-bottom: 1rem;
+		letter-spacing: -1px;
 		color: var(--accent);
-	}
-
-	@media (max-width: 600px) {
-		.hero-info h1 {
-			font-size: 3rem;
-		}
 	}
 
 	.hero-description {
@@ -152,140 +97,56 @@ function formatDate(date: Date): string {
 		line-height: 1.7;
 	}
 
-	.hero-description:last-of-type {
-		margin-bottom: 2rem;
-	}
-
-	.hero-description strong {
-		color: var(--text-main);
-	}
-
-	.cta-button {
-		display: inline-block;
-		background: var(--accent);
-		color: black;
-		padding: 1rem 2rem;
-		text-decoration: none;
-		font-weight: 700;
-		text-transform: uppercase;
-		transition: opacity 0.2s;
-	}
-
-	.cta-button:hover {
-		opacity: 0.9;
-		text-decoration: none;
-	}
-
-	/* --- IMAGE FRAME --- */
-	.image-frame {
-		position: relative;
-		width: 100%;
-		max-width: 400px;
-		aspect-ratio: 1 / 1.1;
-		margin: 0 auto;
-	}
-
-	.profile-pic {
-		width: 100%;
-		height: 100%;
-		object-fit: cover;
-		border: 2px solid var(--border-color);
-		transition: border-color 0.3s ease;
-	}
-
-	.image-frame:hover .profile-pic {
-		border-color: var(--accent);
-	}
 
 	/* --- CONTENT AREA --- */
 	.content-area {
-		padding: 4rem 2rem;
+		padding: 2rem;
 	}
 
 	@media (min-width: 900px) {
 		.content-area {
-			padding: 4rem;
+			padding: 2rem 4rem;
 		}
 	}
 
 	/* --- BLOG ENTRIES --- */
 	.entry {
-		border-top: 1px solid var(--border-color);
-		padding: 3rem 0;
-		display: grid;
-		grid-template-columns: 1fr;
-		gap: 1rem;
-	}
-
-	.entry.last {
+		display: flex;
+		gap: 1.5rem;
+		padding: 0.6rem 0;
 		border-bottom: 1px solid var(--border-color);
+		text-decoration: none;
+		color: var(--text-main);
+		transition: color 0.15s;
 	}
 
-	@media (min-width: 768px) {
-		.entry {
-			grid-template-columns: 200px 1fr;
-			gap: 3rem;
-		}
-	}
-
-	.meta {
-		font-size: 0.85rem;
-		color: var(--text-dim);
-		display: flex;
-		flex-direction: column;
-		gap: 0.5rem;
-	}
-
-	.tags {
-		display: flex;
-		flex-wrap: wrap;
-		gap: 0.5rem;
-	}
-
-	.tag {
-		border: 1px solid var(--border-color);
-		padding: 2px 8px;
-		display: inline-block;
-		width: fit-content;
-		font-size: 0.75rem;
-	}
-
-	.entry-content h3 {
-		font-family: 'Space Grotesk', sans-serif;
-		font-size: 1.75rem;
-		margin-bottom: 1rem;
-		line-height: 1.2;
-	}
-
-	@media (max-width: 600px) {
-		.entry-content h3 {
-			font-size: 1.4rem;
-		}
-	}
-
-	.entry-content p {
-		color: var(--text-dim);
-		margin-bottom: 1.5rem;
-		max-width: 650px;
-	}
-
-	.btn-arrow {
+	.entry:hover {
 		color: var(--accent);
 		text-decoration: none;
-		font-weight: 700;
-		text-transform: uppercase;
-		font-size: 0.9rem;
-		border-bottom: 2px solid transparent;
-		transition: border-color 0.2s;
 	}
 
-	.btn-arrow:hover {
-		border-bottom: 2px solid var(--accent);
-		text-decoration: none;
+	.entry-date {
+		font-size: 0.8rem;
+		color: var(--text-dim);
+		flex-shrink: 0;
+		width: 7rem;
+	}
+
+	.entry-title {
+		font-size: 0.95rem;
 	}
 
 	.view-all {
-		margin-top: 3rem;
-		text-align: center;
+		margin-top: 1.5rem;
+	}
+
+	.view-all a {
+		color: var(--text-dim);
+		text-decoration: none;
+		font-size: 0.85rem;
+	}
+
+	.view-all a:hover {
+		color: var(--accent);
 	}
 </style>

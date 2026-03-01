@@ -41,11 +41,6 @@ body {
 	line-height: 1.6;
 	overflow-x: hidden;
 
-	/* Grid Background Pattern */
-	background-image:
-		linear-gradient(var(--grid-line) 1px, transparent 1px),
-		linear-gradient(90deg, var(--grid-line) 1px, transparent 1px);
-	background-size: 40px 40px;
 }
 
 /* Visible Layout Structure */
