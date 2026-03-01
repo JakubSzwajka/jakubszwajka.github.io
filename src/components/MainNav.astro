@@ -1,0 +1,74 @@
+---
+const currentPath = Astro.url.pathname;
+---
+
+<nav class="main-nav">
+	<a href="/" class={`nav-item ${currentPath === '/' ? 'active' : ''}`}>
+		Home
+	</a>
+	<a href="/blog" class={`nav-item ${currentPath.startsWith('/blog') ? 'active' : ''}`}>
+		Blog
+	</a>
+	<a href="/projects" class={`nav-item ${currentPath === '/projects' ? 'active' : ''}`}>
+		Projects
+	</a>
+	<a href="/work-with-me" class={`nav-item ${currentPath === '/work-with-me' ? 'active' : ''}`}>
+		Work With Me
+	</a>
+</nav>
+
+<style>
+	.main-nav {
+		border-bottom: 2px solid var(--text-main);
+		padding: 1.5rem 2rem;
+		display: flex;
+		gap: 3rem;
+		font-family: 'Space Grotesk', sans-serif;
+		font-size: 1rem;
+		text-transform: uppercase;
+		letter-spacing: 1px;
+	}
+
+	@media (min-width: 900px) {
+		.main-nav {
+			padding: 1.5rem 4rem;
+		}
+	}
+
+	.nav-item {
+		text-decoration: none;
+		color: var(--text-dim);
+		transition: color 0.2s;
+		position: relative;
+		font-weight: 600;
+	}
+
+	.nav-item:hover {
+		color: var(--accent);
+		text-decoration: none;
+	}
+
+	.nav-item.active {
+		color: var(--accent);
+	}
+
+	.nav-item.active::after {
+		content: '';
+		position: absolute;
+		bottom: -1.5rem;
+		left: 0;
+		right: 0;
+		height: 2px;
+		background: var(--accent);
+	}
+
+	@media (max-width: 600px) {
+		.main-nav {
+			padding: 1rem;
+			gap: 1.5rem;
+			font-size: 0.85rem;
+			overflow-x: auto;
+			white-space: nowrap;
+		}
+	}
+</style>

@@ -2,6 +2,7 @@
 import BaseHead from '../components/BaseHead.astro';
 import Footer from '../components/Footer.astro';
 import Header from '../components/Header.astro';
+import MainNav from '../components/MainNav.astro';
 import { SITE_DESCRIPTION, SITE_TITLE, EMAIL } from '../consts';
 import { getCollection } from 'astro:content';
 
@@ -67,6 +68,9 @@ function formatDate(date: Date): string {
 					/>
 				</div>
 			</header>
+
+			<!-- MAIN NAVIGATION -->
+			<MainNav />
 
 			<!-- NAV STRIP -->
 			<Header />
