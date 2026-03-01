@@ -2,7 +2,7 @@
 import type { CollectionEntry } from 'astro:content';
 import BaseHead from '../components/BaseHead.astro';
 import Footer from '../components/Footer.astro';
-import Header from '../components/Header.astro';
+import MainNav from '../components/MainNav.astro';
 
 type Props = CollectionEntry<'blog'>['data'] & { id: string };
 
@@ -25,29 +25,13 @@ function formatDate(date: Date): string {
 
 	<body>
 		<div class="wrapper">
+			<MainNav />
+
 			<article class="blog-post">
 				<header class="post-header">
-					<a href="/" class="back-link">&lt;- Back to Archive</a>
-
-					<div class="post-meta">
-						<span class="date">// {formatDate(pubDate)}</span>
-						{updatedDate && (
-							<span class="updated">Updated: {formatDate(updatedDate)}</span>
-						)}
-					</div>
-
-					{tags && tags.length > 0 && (
-						<div class="tags">
-							{tags.map((tag) => (
-								<span class="tag">{tag.toUpperCase()}</span>
-							))}
-						</div>
-					)}
-
+					<span class="date">{formatDate(pubDate)}</span>
 					<h1>{title}</h1>
 				</header>
-
-				<Header />
 
 				<div class="prose">
 					<slot />
@@ -69,83 +53,30 @@ function formatDate(date: Date): string {
 	}
 
 	.post-header {
-		padding: 4rem 2rem;
-		border-bottom: 2px solid var(--text-main);
-	}
-
-	@media (min-width: 900px) {
-		.post-header {
-			padding: 4rem;
-		}
-	}
-
-	.back-link {
-		color: var(--text-dim);
-		text-decoration: none;
-		font-size: 0.9rem;
-		text-transform: uppercase;
-		display: inline-block;
-		margin-bottom: 2rem;
-		transition: color 0.2s;
-	}
-
-	.back-link:hover {
-		color: var(--accent);
-	}
-
-	.post-meta {
-		display: flex;
-		gap: 2rem;
-		margin-bottom: 1rem;
-		font-size: 0.9rem;
-		color: var(--text-dim);
-	}
-
-	.updated {
-		font-style: italic;
-	}
-
-	.tags {
-		display: flex;
-		flex-wrap: wrap;
-		gap: 0.75rem;
-		margin-bottom: 1.5rem;
-	}
-
-	.tags .tag {
-		border: 1px solid var(--border-color);
-		padding: 4px 10px;
-		font-size: 0.75rem;
-		color: var(--text-dim);
-		display: inline-block;
-		background: transparent;
-	}
-
-	.post-header h1 {
-		font-family: 'Space Grotesk', sans-serif;
-		font-size: 2.5rem;
-		line-height: 1.1;
-		margin: 0;
-		max-width: 800px;
-	}
-
-	@media (min-width: 900px) {
-		.post-header h1 {
-			font-size: 3rem;
-		}
-	}
-
-	/* Prose content styling */
-	.prose {
-		padding: 4rem 2rem;
+		padding: 2rem;
 		max-width: 800px;
 		margin: 0 auto;
 	}
 
-	@media (min-width: 900px) {
-		.prose {
-			padding: 4rem;
-		}
+	.date {
+		font-size: 0.8rem;
+		color: var(--text-dim);
+		display: block;
+		margin-bottom: 0.5rem;
+	}
+
+	.post-header h1 {
+		font-family: 'Space Grotesk', sans-serif;
+		font-size: 1.5rem;
+		line-height: 1.2;
+		margin: 0;
+	}
+
+	/* Prose content styling */
+	.prose {
+		padding: 2rem;
+		max-width: 800px;
+		margin: 0 auto;
 	}
 
 	/* Global prose styles */
