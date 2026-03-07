@@ -40,6 +40,7 @@ function formatDate(date: Date): string {
 
 				<footer class="post-footer">
 					<a href="/" class="btn-arrow">&lt;- All Posts</a>
+					<a href={`https://github.com/JakubSzwajka/JakubSzwajka.github.io/edit/main/src/content/blog/${id}.md`} class="btn-arrow" target="_blank" rel="noopener noreferrer">Edit on GitHub -&gt;</a>
 				</footer>
 			</article>
 
@@ -181,7 +182,10 @@ function formatDate(date: Date): string {
 	.post-footer {
 		padding: 2rem;
 		border-top: 1px solid var(--border-color);
-		text-align: center;
+		display: flex;
+		justify-content: space-between;
+		max-width: 800px;
+		margin: 0 auto;
 	}
 
 	@media (min-width: 900px) {
