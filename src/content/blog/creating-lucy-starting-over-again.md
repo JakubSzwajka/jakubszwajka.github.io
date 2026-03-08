@@ -17,23 +17,29 @@ Lately got super inspired by [Overment](https://x.com/_overment), [JoelClaw](htt
 
 [github.com/JakubSzwajka/lucy](https://github.com/JakubSzwajka/lucy)
 
+## Making my hands dirty
+
+So I can see two main reasons for this project. Let's set the scene.
+
+- Replicate or adjust to me as much of 'openClaw like' features as I can to learn and understand how it all works and where are the challenges.
+- See how far I can push my dev workflow to be like 99% agentic and autonomous yet still not in vibe coding zone. The ultimate shape is that I have a good understanding of the codebase, I like how it looks and its quality yet I'm not the one who writes the code.
+
 ## The next steps
 
-I want to document current Lucy shape and some future enhancements as I build them. The plan is to steal like an artist to gain proper understanding of the whole agentic stuff here.
+Lucy already has some shape which is stabilising so just a few words around it.
 
-First I want to clean up the repo with a plugin architecture — something composable and configurable. Then make it run in the background and actually learn.
+**Key aspects that I wanted to address in the first place:**
 
-Will leave here a note for myself with this weird diagram I made this morning.
+- Extensibility - I'm trying to figure out some kind of plugin architecture for this. So far noticed that different configurations for Agents solves different problems. I don't want to rebuild it when something new will come up or the needs will change. The idea is to have it configurable via a single `.json` file injected in the build proces.
+- Layers - This is something I've got from openClaw I think.
+    - The gateway layer for the agent. By design it's not like "multi agent system" this time. Here `single deployable unit` == `agent`. So even if I will need more agents I can deploy a cluster of them. But I hope to have such problems! 🤷
+    - The runtime layer. Pure interaction with LLM. Nothing fancy here - composing the prompts etc. Yet idea here is to be able to make a plugin interface so I can quickly add/remove different features like: memory, tools etc.
+- Plugins - Both layers have a plugin interface. Runtime layer has those hooks like:
+    - `onInit` → run once on startup. Idea here is to setup some cron jobs for plugins.
+    - `onMessageReceived` → The message comes in. Runs before LLM. Building context for the received message.
+    - `onMessageResponse` → The message comes out. Might be some validation or something?
+    - `onDestroy` → On container stop. Kill what you need etc.
+
+Even did some silly graph this morning which I'm not sure if still makes sense but want to leave it here for reference! Let's just jump into this rabbit hole. 🐰
 
 ![Lucy architecture diagram](/blog-images/creating-lucy-starting-over-again/architecture.png)
-
-The idea here is to have like a core runtime and something like a plugin interface where I can easily add memory and tools via config file. The hooks for the runtime plugins would be:
-
-- `onInit` → run once.
-- `onMessageReceived` → building context for the received message.
-- `onMessageResponse` → saving the response
-- `onDestroy` → opposite to onInit.
-
-I can think of a similar concept to be added to parts like `http_gateway`. For example `WhatsApp` plugin to `http_gateway` since both will serve some http endpoints.
-
-Let's just jump into this rabbit hole.
