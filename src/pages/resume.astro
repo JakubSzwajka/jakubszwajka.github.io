@@ -1,0 +1,495 @@
+---
+import BaseHead from '../components/BaseHead.astro';
+import Footer from '../components/Footer.astro';
+import MainNav from '../components/MainNav.astro';
+import { SITE_TITLE, GITHUB_URL, LINKEDIN_URL, TWITTER_URL, EMAIL } from '../consts';
+---
+
+<!doctype html>
+<html lang="en">
+	<head>
+		<BaseHead
+			title={`Resume // ${SITE_TITLE}`}
+			description="Resume of Jakub Szwajka — Senior Full Stack Engineer"
+		/>
+	</head>
+	<body>
+		<div class="wrapper">
+			<MainNav />
+
+			<main class="resume">
+				<header class="resume-header">
+					<div class="resume-intro">
+						<h1>Jakub Szwajka</h1>
+						<p class="subtitle">Senior Full Stack Engineer</p>
+						<p class="location">Wrocław, Poland · Remote (EU/US timezones)</p>
+						<div class="resume-links">
+							<a href={GITHUB_URL} target="_blank"><i class="ph-bold ph-github-logo"></i> GitHub</a>
+							<a href={LINKEDIN_URL} target="_blank"><i class="ph-bold ph-linkedin-logo"></i> LinkedIn</a>
+							<a href={TWITTER_URL} target="_blank"><i class="ph-bold ph-x-logo"></i> X</a>
+							<a href={`mailto:${EMAIL}`}><i class="ph-bold ph-envelope-simple"></i> Email</a>
+						</div>
+					</div>
+					<a href="/cv.pdf" download class="download-btn">
+						<i class="ph-bold ph-file-pdf"></i> Download PDF
+					</a>
+				</header>
+
+				<section class="resume-section">
+					<h2>Summary</h2>
+					<p>Senior Full Stack Engineer with 6+ years building 0-to-1 products for US startups. I care about the "why" as much as the "how" — understanding the business context before writing code, and building systems that grow with the product.</p>
+					<p>Backend, frontend, infrastructure, architecture, e2e testing — I've done all of it, often on the same project.</p>
+					<p class="best-fit"><strong>Best fit:</strong> Growing products where I can shape architecture alongside the business — greenfield builds or systems constantly building new capabilities. Not maintenance.</p>
+					<div class="stack-row">
+						<div class="stack-item"><span class="stack-label">Stack</span> Python (FastAPI), TypeScript (React), AWS (Fargate, CDK, Kinesis), PostgreSQL, Docker</div>
+						<div class="stack-item"><span class="stack-label">AI/Tools</span> LLMs, RAG, MCP, Claude Code, Agentic workflows</div>
+						<div class="stack-item"><span class="stack-label">Languages</span> Polish (native), English (fluent — daily work language with US clients)</div>
+					</div>
+				</section>
+
+				<section class="resume-section">
+					<h2>Experience</h2>
+
+					<div class="job">
+						<div class="job-header">
+							<h3>Sofomo</h3>
+							<span class="job-title">Senior Full Stack Engineer</span>
+							<span class="job-meta">Jun 2022 – Present · Remote, US clients</span>
+						</div>
+						<p class="job-desc">Embedded with US-based startups as a contractor through Sofomo. With each project taking on increasing ownership and technical leadership across different clients, teams, and tech stacks. Beyond client work: mentoring junior engineers, technical recruiting, architecture consulting for new projects, and creating technical documentation.</p>
+
+						<div class="project">
+							<h4>IoT Platform (100K+ connected devices)</h4>
+							<span class="project-role">Data Platform Engineer / Architecture Consultant</span>
+							<ul>
+								<li>Helped build the data team responsible for real-time processing and analytics services.</li>
+								<li>Built data warehouse and streaming pipelines (AWS Fargate, AWS Kinesis Streams, Kinesis Firehose).</li>
+								<li>Conducted architecture review of external team's backend rewrite; provided technical recommendations that informed project direction.</li>
+								<li>Scale: 100,000+ connected IoT devices, high-throughput data ingestion.</li>
+							</ul>
+						</div>
+
+						<div class="project">
+							<h4>Real-time Captioning Marketplace</h4>
+							<span class="project-role">Tech Lead / Fullstack Engineer</span>
+							<ul>
+								<li>Building 0-to-1 marketplace for booking live captioners for meetings and events.</li>
+								<li>End-to-end ownership: backend (Python), admin panel (React), full infrastructure.</li>
+								<li>Stripe integration for payments and bi-weekly contractor payouts.</li>
+								<li>External service integrations for real-time captioning delivery.</li>
+								<li>Greenfield product, currently in market launch phase.</li>
+							</ul>
+						</div>
+
+						<div class="project">
+							<h4>EdTech Platform (SAT/ACT Test Prep)</h4>
+							<span class="project-role">Lead Backend Engineer</span>
+							<ul>
+								<li>Built entire backend from scratch using Next.js.</li>
+								<li>Designed test generation system serving 100+ concurrent test-takers in US schools.</li>
+								<li>Contributed to frontend when needed.</li>
+							</ul>
+						</div>
+
+						<div class="project">
+							<h4>AI-powered Enterprise Platform ($350M+ funding)</h4>
+							<span class="project-role">Software Engineer</span>
+							<ul>
+								<li>Owned a domain service within a microservices architecture (Kubernetes).</li>
+								<li>Worked in a small, autonomous team responsible for end-to-end delivery.</li>
+							</ul>
+						</div>
+					</div>
+
+					<div class="job">
+						<div class="job-header">
+							<h3>TietoEvry</h3>
+							<span class="job-title">Software Engineer</span>
+							<span class="job-meta">Aug 2021 – Jun 2022 · Wrocław, Poland</span>
+						</div>
+						<ul>
+							<li>Implemented features for fleet management web application (Django).</li>
+							<li>Refactored legacy components to improve development velocity.</li>
+							<li>Active participant in feature design and code review processes.</li>
+						</ul>
+					</div>
+
+					<div class="job">
+						<div class="job-header">
+							<h3>BTech</h3>
+							<span class="job-title">Python Developer</span>
+							<span class="job-meta">Jun 2019 – Aug 2021 · Wrocław, Poland</span>
+						</div>
+						<ul>
+							<li>Built web platform for managing GCP notebook instances (Django, React).</li>
+							<li>Set up CI/CD pipeline (Docker, GitHub Actions) — to improve CI process and release frequency.</li>
+						</ul>
+					</div>
+				</section>
+
+				<section class="resume-section">
+					<h2>AI & LLM Projects</h2>
+
+					<div class="project">
+						<h4>Conversational AI Agent with RAG & Long-term Memory <span class="year">(2024)</span></h4>
+						<ul>
+							<li>Built AI assistant with persistent memory using vector embeddings and semantic retrieval.</li>
+							<li>Implemented full RAG pipeline: vector database for storage, embeddings for semantic search.</li>
+							<li>Designed memory distillation system — LLM extracts facts from conversations, embeds them, stores for future context retrieval.</li>
+							<li>Multi-source orchestration: Slack (real-time chat), Airtable (structured data), vector search.</li>
+						</ul>
+					</div>
+
+					<div class="project">
+						<h4>Multi-Agent System via Prompt Engineering <span class="year">(ongoing)</span></h4>
+						<ul>
+							<li>Built 4 specialized AI agents (productivity, writing, finance, strategy) on a single platform through prompt engineering.</li>
+							<li>Designed agent architectures: distinct personas, capabilities, memory systems.</li>
+							<li>Agents collaborate and reference each other's context within conversations.</li>
+						</ul>
+					</div>
+
+					<div class="project">
+						<h4>AI-Augmented Development Workflows</h4>
+						<ul>
+							<li>Daily use of Claude Code for repository-aware development — custom instructions tuned to project standards.</li>
+							<li>Built custom MCP server (Model Context Protocol) — custom search tool for LLM to extend the regular UI search in client app.</li>
+							<li>Building and iterating on prompts and agent configurations for consistent, high-quality code generation.</li>
+						</ul>
+					</div>
+				</section>
+
+				<section class="resume-section">
+					<h2>What I Bring</h2>
+					<div class="traits">
+						<div class="trait">
+							<h4>Full-stack ownership</h4>
+							<p>I take full ownership. When I take on a project, I'm happy to own it end-to-end: backend, frontend, infrastructure, deployment.</p>
+						</div>
+						<div class="trait">
+							<h4>Architecture with business context</h4>
+							<p>I start by understanding the business domain — identifying natural boundaries and reusable system capabilities. The goal: build systems that evolve with the business, not against it.</p>
+						</div>
+						<div class="trait">
+							<h4>Async-first, remote-native</h4>
+							<p>3+ years working with US clients across timezones. Clear written communication, proactive updates, and documentation that doesn't require a call to understand.</p>
+						</div>
+						<div class="trait">
+							<h4>AI-augmented development</h4>
+							<p>I build and configure AI agents tailored to specific repositories, tuned to follow project standards and deliver precise work. This has a direct impact on my development speed.</p>
+						</div>
+					</div>
+				</section>
+
+				<section class="resume-section">
+					<h2>Education & Certifications</h2>
+
+					<div class="education">
+						<h4>WWSIS Horyzont</h4>
+						<span class="job-meta">B.Eng. Computer Science (2018–2021)</span>
+						<p class="thesis"><em>Thesis: Vendor Compliance Monitor for VAT Whitelist Verification in SAP ERP</em></p>
+					</div>
+
+					<h4 class="dev-heading">Professional Development</h4>
+					<ul class="certifications">
+						<li><strong>Developer Jutra</strong> <span class="year">(in progress)</span> — Full-stack development with AI tooling: TypeScript, React/Next.js, AI-powered coding workflows.</li>
+						<li><strong>Domain Drivers</strong> <span class="year">(2025)</span> — Comprehensive Domain-Driven Design program (strategic & tactical patterns, Event Storming, bounded contexts).</li>
+						<li><strong>Legacy Fighter</strong> <span class="year">(2024/2025)</span> — Refactoring and legacy code modernization: techniques for safely evolving complex systems.</li>
+						<li><strong>DNA: Designing Next-Gen Architecture</strong> <span class="year">(2023/2024)</span> — Software architecture program covering DDD, Event Sourcing, microservices, and legacy modernization.</li>
+						<li><strong>AI Devs</strong> <span class="year">(2023/2024, 2 editions)</span> — Practical AI/LLM course for developers: building agents, prompt engineering, production AI workflows.</li>
+					</ul>
+				</section>
+			</main>
+
+			<Footer />
+		</div>
+	</body>
+</html>
+
+<style>
+	.resume {
+		padding: 2rem;
+		max-width: 800px;
+		margin: 0 auto;
+	}
+
+	/* Header */
+	.resume-header {
+		display: flex;
+		justify-content: space-between;
+		align-items: flex-start;
+		gap: 2rem;
+		margin-bottom: 3rem;
+		padding-bottom: 2rem;
+		border-bottom: 1px solid var(--border-color);
+	}
+
+	.resume-header h1 {
+		font-size: 2.5rem;
+		margin-bottom: 0.25rem;
+	}
+
+	.subtitle {
+		font-family: 'Space Grotesk', sans-serif;
+		font-size: 1.1rem;
+		color: var(--accent);
+		margin-bottom: 0.25rem !important;
+	}
+
+	.location {
+		color: var(--text-dim);
+		font-size: 0.85rem;
+		margin-bottom: 0.75rem !important;
+	}
+
+	.resume-links {
+		display: flex;
+		gap: 1.25rem;
+		flex-wrap: wrap;
+	}
+
+	.resume-links a {
+		color: var(--text-dim);
+		font-size: 0.8rem;
+		text-decoration: none;
+		transition: color 0.2s;
+	}
+
+	.resume-links a:hover {
+		color: var(--accent);
+		text-decoration: none;
+	}
+
+	.resume-links i {
+		margin-right: 2px;
+	}
+
+	.download-btn {
+		display: inline-flex;
+		align-items: center;
+		gap: 0.5rem;
+		padding: 0.6rem 1.25rem;
+		border: 1px solid var(--accent);
+		color: var(--accent);
+		font-family: 'Space Grotesk', sans-serif;
+		font-size: 0.85rem;
+		font-weight: 600;
+		text-transform: uppercase;
+		letter-spacing: 0.5px;
+		text-decoration: none;
+		transition: all 0.2s;
+		white-space: nowrap;
+		flex-shrink: 0;
+	}
+
+	.download-btn:hover {
+		background: var(--accent);
+		color: var(--bg-color);
+		text-decoration: none;
+	}
+
+	/* Sections */
+	.resume-section {
+		margin-bottom: 3rem;
+	}
+
+	.resume-section h2 {
+		font-size: 1.5rem;
+		text-transform: uppercase;
+		letter-spacing: 2px;
+		margin-bottom: 1.5rem;
+		padding-bottom: 0.5rem;
+		border-bottom: 1px solid var(--border-color);
+	}
+
+	.resume-section p {
+		font-size: 0.9rem;
+		color: var(--text-dim);
+		line-height: 1.7;
+	}
+
+	.best-fit {
+		margin-top: 0.5rem;
+	}
+
+	.best-fit strong {
+		color: var(--accent);
+	}
+
+	/* Stack row */
+	.stack-row {
+		margin-top: 1.25rem;
+		display: flex;
+		flex-direction: column;
+		gap: 0.5rem;
+	}
+
+	.stack-item {
+		font-size: 0.85rem;
+		color: var(--text-dim);
+		line-height: 1.6;
+	}
+
+	.stack-label {
+		color: var(--text-main);
+		font-weight: 600;
+		margin-right: 0.5rem;
+	}
+
+	.stack-label::after {
+		content: ':';
+	}
+
+	/* Jobs */
+	.job {
+		margin-bottom: 2.5rem;
+	}
+
+	.job-header {
+		margin-bottom: 0.75rem;
+	}
+
+	.job-header h3 {
+		font-size: 1.2rem;
+		margin-bottom: 0;
+		display: inline;
+	}
+
+	.job-title {
+		font-family: 'Space Grotesk', sans-serif;
+		color: var(--accent);
+		font-size: 0.9rem;
+		display: block;
+		margin-top: 0.15rem;
+	}
+
+	.job-meta {
+		color: var(--text-dim);
+		font-size: 0.8rem;
+		display: block;
+		margin-top: 0.15rem;
+	}
+
+	.job-desc {
+		margin-bottom: 1.25rem !important;
+	}
+
+	/* Projects */
+	.project {
+		margin-bottom: 1.5rem;
+		padding-left: 1rem;
+		border-left: 2px solid var(--border-color);
+	}
+
+	.project h4 {
+		font-size: 0.95rem;
+		margin-bottom: 0.15rem;
+	}
+
+	.project-role {
+		font-size: 0.8rem;
+		color: var(--text-dim);
+		font-style: italic;
+		display: block;
+		margin-bottom: 0.5rem;
+	}
+
+	.year {
+		color: var(--text-dim);
+		font-weight: 400;
+		font-size: 0.85rem;
+	}
+
+	/* Lists */
+	ul {
+		list-style: none;
+		padding: 0;
+	}
+
+	ul li {
+		position: relative;
+		padding-left: 1rem;
+		font-size: 0.85rem;
+		color: var(--text-dim);
+		line-height: 1.7;
+		margin-bottom: 0.35rem;
+	}
+
+	ul li::before {
+		content: '·';
+		position: absolute;
+		left: 0;
+		color: var(--accent);
+		font-weight: bold;
+	}
+
+	/* Traits */
+	.traits {
+		display: grid;
+		grid-template-columns: 1fr 1fr;
+		gap: 1.5rem;
+	}
+
+	.trait h4 {
+		font-size: 0.95rem;
+		margin-bottom: 0.35rem;
+	}
+
+	.trait p {
+		font-size: 0.8rem !important;
+		margin-bottom: 0 !important;
+	}
+
+	/* Education */
+	.education {
+		margin-bottom: 1.5rem;
+	}
+
+	.education h4 {
+		font-size: 1rem;
+		margin-bottom: 0;
+	}
+
+	.thesis {
+		font-size: 0.8rem !important;
+		margin-top: 0.35rem;
+	}
+
+	.dev-heading {
+		font-size: 0.95rem;
+		margin-bottom: 0.75rem;
+		color: var(--text-dim);
+	}
+
+	.certifications li {
+		margin-bottom: 0.6rem;
+	}
+
+	.certifications strong {
+		color: var(--text-main);
+	}
+
+	/* Responsive */
+	@media (max-width: 600px) {
+		.resume {
+			padding: 1.5rem 1rem;
+		}
+
+		.resume-header {
+			flex-direction: column;
+			gap: 1.25rem;
+		}
+
+		.resume-header h1 {
+			font-size: 2rem;
+		}
+
+		.download-btn {
+			align-self: flex-start;
+		}
+
+		.traits {
+			grid-template-columns: 1fr;
+		}
+	}
+</style>
