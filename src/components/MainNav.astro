@@ -4,27 +4,34 @@ const currentPath = Astro.url.pathname;
 ---
 
 <nav class="main-nav">
-	<div class="nav-links">
-		<a href="/" class={`nav-item ${currentPath === '/' ? 'active' : ''}`}>
-			Home
-		</a>
-		<a href="/projects" class={`nav-item ${currentPath === '/projects' ? 'active' : ''}`}>
-			Projects
-		</a>
-	</div>
-	<div class="nav-socials">
-		<a href={GITHUB_URL} class="nav-social" target="_blank" aria-label="GitHub">
-			<i class="ph-bold ph-github-logo"></i>
-		</a>
-		<a href={LINKEDIN_URL} class="nav-social" target="_blank" aria-label="LinkedIn">
-			<i class="ph-bold ph-linkedin-logo"></i>
-		</a>
-		<a href={TWITTER_URL} class="nav-social" target="_blank" aria-label="X">
-			<i class="ph-bold ph-x-logo"></i>
-		</a>
-		<a href={`mailto:${EMAIL}`} class="nav-social" aria-label="Email">
-			<i class="ph-bold ph-envelope-simple"></i>
-		</a>
+	<a href="/" class="nav-brand">Kuba Szwajka</a>
+	<div class="nav-right">
+		<div class="nav-links">
+			<a href="/" class={`nav-item ${currentPath === '/' ? 'active' : ''}`}>
+				Home
+			</a>
+			<a href="/projects" class={`nav-item ${currentPath === '/projects' ? 'active' : ''}`}>
+				Projects
+			</a>
+			<a href="/resume" class={`nav-item ${currentPath === '/resume' ? 'active' : ''}`}>
+				Resume
+			</a>
+		</div>
+		<span class="nav-divider">|</span>
+		<div class="nav-socials">
+			<a href={GITHUB_URL} class="nav-social" target="_blank" aria-label="GitHub">
+				<i class="ph-bold ph-github-logo"></i>
+			</a>
+			<a href={LINKEDIN_URL} class="nav-social" target="_blank" aria-label="LinkedIn">
+				<i class="ph-bold ph-linkedin-logo"></i>
+			</a>
+			<a href={TWITTER_URL} class="nav-social" target="_blank" aria-label="X">
+				<i class="ph-bold ph-x-logo"></i>
+			</a>
+			<a href={`mailto:${EMAIL}`} class="nav-social" aria-label="Email">
+				<i class="ph-bold ph-envelope-simple"></i>
+			</a>
+		</div>
 	</div>
 </nav>
 
@@ -51,9 +58,34 @@ const currentPath = Astro.url.pathname;
 		}
 	}
 
+	.nav-brand {
+		text-decoration: none;
+		color: var(--accent);
+		font-weight: 700;
+		font-size: 1.1rem;
+		white-space: nowrap;
+	}
+
+	.nav-brand:hover {
+		text-decoration: none;
+		color: var(--accent);
+	}
+
+	.nav-right {
+		display: flex;
+		align-items: center;
+		gap: 1.5rem;
+	}
+
 	.nav-links {
 		display: flex;
-		gap: 3rem;
+		gap: 2rem;
+	}
+
+	.nav-divider {
+		color: rgba(255, 255, 255, 0.2);
+		font-weight: 300;
+		user-select: none;
 	}
 
 	.nav-socials {
@@ -84,6 +116,7 @@ const currentPath = Astro.url.pathname;
 		transition: color 0.2s;
 		position: relative;
 		font-weight: 600;
+		font-size: 0.85rem;
 	}
 
 	.nav-item:hover {
@@ -116,6 +149,10 @@ const currentPath = Astro.url.pathname;
 		}
 
 		.nav-socials {
+			display: none;
+		}
+
+		.nav-divider {
 			display: none;
 		}
 	}
