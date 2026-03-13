@@ -3,6 +3,7 @@ title: 'Creating Lucy: Starting Over (Again) (Still Not AGI)'
 description: 'Revisiting my longest-running side project — Lucy — with fresh inspiration and a plugin architecture plan.'
 pubDate: 'March 7, 2026'
 tags: ['AI', 'Lucy']
+draft: true
 ---
 
 This side project is so old and never had a final, defined shape I wanted to achieve. I've overwritten a repo several times, but I can see one of the first blog posts where I started playing with this stuff is almost 2 years old!
