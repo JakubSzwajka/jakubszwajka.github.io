@@ -39,6 +39,9 @@ function formatDate(date: Date): string {
 				<header class="post-header">
 					<span class="date">{formatDate(pubDate)}</span>
 					<h1>{title}</h1>
+					<div class="post-actions">
+						<a href={`/blog/${id}.txt`} class="raw-link" target="_blank" rel="noopener noreferrer">Raw text for LLM</a>
+					</div>
 				</header>
 
 				{tocHeadings.length > 0 && (
@@ -115,6 +118,29 @@ function formatDate(date: Date): string {
 		font-size: 1.5rem;
 		line-height: 1.2;
 		margin: 0;
+	}
+
+	.post-actions {
+		margin-top: 1rem;
+	}
+
+	.raw-link {
+		display: inline-flex;
+		align-items: center;
+		padding: 0.35rem 0.6rem;
+		border: 1px solid var(--accent);
+		color: var(--accent);
+		font-size: 0.75rem;
+		font-weight: 700;
+		text-transform: uppercase;
+		letter-spacing: 0.04em;
+		text-decoration: none;
+	}
+
+	.raw-link:hover {
+		background: var(--accent);
+		color: var(--bg-color);
+		text-decoration: none;
 	}
 
 	.toc {
