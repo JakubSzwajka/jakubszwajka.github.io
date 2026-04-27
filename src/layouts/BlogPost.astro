@@ -4,10 +4,17 @@ import BaseHead from '../components/BaseHead.astro';
 import Footer from '../components/Footer.astro';
 import MainNav from '../components/MainNav.astro';
 
-type Props = CollectionEntry<'blog'>['data'] & { id: string };
+type TocHeading = {
+	depth: number;
+	slug: string;
+	text: string;
+};
 
-const { title, description, pubDate, updatedDate, tags, id } = Astro.props;
+type Props = CollectionEntry<'blog'>['data'] & { id: string; headings?: TocHeading[] };
+
+const { title, description, pubDate, updatedDate, tags, id, headings = [] } = Astro.props;
 const ogImage = `/og/${id}.png`;
+const tocHeadings = headings.filter((heading) => heading.depth >= 2 && heading.depth <= 3);
 
 // Format date for display
 function formatDate(date: Date): string {
@@ -34,6 +41,19 @@ function formatDate(date: Date): string {
 					<h1>{title}</h1>
 				</header>
 
+				{tocHeadings.length > 0 && (
+					<nav class="toc" aria-label="Table of contents">
+						<p class="toc-title">Contents</p>
+						<ol>
+							{tocHeadings.map((heading) => (
+								<li class={`toc-depth-${heading.depth}`}>
+									<a href={`#${heading.slug}`} data-toc-link={heading.slug}>{heading.text}</a>
+								</li>
+							))}
+						</ol>
+					</nav>
+				)}
+
 				<div class="prose">
 					<slot />
 				</div>
@@ -46,6 +66,29 @@ function formatDate(date: Date): string {
 
 			<Footer />
 		</div>
+
+		<script>
+			const tocLinks = Array.from(document.querySelectorAll('[data-toc-link]'));
+			const headings = tocLinks
+				.map((link) => document.getElementById(link.getAttribute('data-toc-link') || ''))
+				.filter(Boolean);
+
+			function activateTocLink() {
+				if (tocLinks.length === 0 || headings.length === 0) return;
+
+				const currentHeading = [...headings]
+					.reverse()
+					.find((heading) => heading.getBoundingClientRect().top <= 140) || headings[0];
+
+				tocLinks.forEach((link) => {
+					link.classList.toggle('is-active', link.getAttribute('data-toc-link') === currentHeading.id);
+				});
+			}
+
+			activateTocLink();
+			document.addEventListener('scroll', activateTocLink, { passive: true });
+			window.addEventListener('resize', activateTocLink);
+		</script>
 	</body>
 </html>
 
@@ -72,6 +115,60 @@ function formatDate(date: Date): string {
 		font-size: 1.5rem;
 		line-height: 1.2;
 		margin: 0;
+	}
+
+	.toc {
+		position: fixed;
+		top: 7rem;
+		left: calc(50% + 430px);
+		width: 280px;
+		max-height: calc(100vh - 9rem);
+		overflow-y: auto;
+		padding: 1rem;
+		background: color-mix(in srgb, var(--bg-color) 92%, transparent);
+		backdrop-filter: blur(8px);
+		font-size: 0.75rem;
+		z-index: 10;
+	}
+
+	.toc-title {
+		margin: 0 0 0.75rem;
+		font-family: 'Space Grotesk', sans-serif;
+		font-size: 0.8rem;
+		font-weight: 700;
+		text-transform: uppercase;
+		letter-spacing: 0.08em;
+		color: var(--text-main);
+	}
+
+	.toc ol {
+		list-style: none;
+		margin: 0;
+		padding: 0;
+	}
+
+	.toc li {
+		margin-bottom: 0.55rem;
+		line-height: 1.35;
+	}
+
+	.toc .toc-depth-3 {
+		padding-left: 0.8rem;
+	}
+
+	.toc a {
+		color: var(--text-dim);
+		text-decoration: none;
+	}
+
+	.toc a:hover,
+	.toc a.is-active {
+		color: var(--accent);
+		text-decoration: none;
+	}
+
+	.toc a.is-active {
+		font-weight: 700;
 	}
 
 	/* Prose content styling */
@@ -186,6 +283,12 @@ function formatDate(date: Date): string {
 		justify-content: space-between;
 		max-width: 800px;
 		margin: 0 auto;
+	}
+
+	@media (max-width: 1450px) {
+		.toc {
+			display: none;
+		}
 	}
 
 	@media (min-width: 900px) {
