@@ -1236,22 +1236,3 @@ const occurredAt = ctx.platform.clock.now();
 ```
 
 ---
-
-## 23. Current-state note
-
-The existing code does not fully match this target yet.
-
-Known gaps include:
-
-- some module folders lack full facade/index/README boundaries;
-- repositories are currently wired/imported in places that should eventually use
-  facades or private module construction;
-- schema is currently centralized rather than module-owned;
-- some events are published by orchestration code rather than the owning module;
-- readmodels and routes need to move toward context-first transaction usage;
-- subscriber registration should live in composition/application root, not in the
-  events module.
-
-These are migration concerns, not changes to the target model.
-
-The target model in this document should guide future refactors and new code.
