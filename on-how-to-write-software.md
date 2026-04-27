@@ -1,9 +1,9 @@
 # On How To Write Software
 
-This document defines how we want to structure Monitor as it grows.
+This document defines how I want a software system to be structured as it grows.
 
 It is not a generic architecture manifesto. It is the working agreement for this
-repository: how to name things, where code belongs, how modules talk to each
+codebase: how to name things, where code belongs, how modules talk to each
 other, how transactions and events work, and how we test the result.
 
 The goal is simple:
@@ -15,7 +15,7 @@ The goal is simple:
 
 ## 1. Core idea: small named programs
 
-A good unit of software in this repo is not merely a folder, class, service, or
+A good unit of software in a codebase is not merely a folder, class, service, or
 function. It is a small named program.
 
 A small program has:
@@ -48,19 +48,19 @@ When in doubt, ask:
 
 ### Capability
 
-A **capability** is something Monitor can do.
+A **capability** is something the system can do.
 
 Examples:
 
-- manage projects and tasks;
-- manage parties;
-- create comments;
-- notify inbox recipients;
-- compose prompts;
-- execute runs;
+- manage tasks;
+- manage users;
+- create messages;
+- notify recipients;
+- compose content;
+- execute jobs;
 - dispatch work from events;
-- discover runtimes;
-- reset application data.
+- discover workers;
+- reset application state.
 
 A capability is a product/system behavior. It may be implemented by one module,
 a use case, a process, or several collaborating units.
@@ -78,7 +78,7 @@ A module may own:
 - or a mixture of these.
 
 A module is not required to be “pure domain.” Some real capabilities are mixed.
-For example, execution owns run state and also orchestrates runtime adapters.
+For example, `job-execution` owns job state and also orchestrates worker adapters.
 That is acceptable when the module has a stable vocabulary and a real reason to
 exist.
 
@@ -94,17 +94,17 @@ helpers, mappers, or storage files.
 Facade names use the `Facade` suffix:
 
 ```ts
-export interface ProjectManagementFacade {
-  createTask(ctx: MonitorOperationContext, input: CreateTaskInput): Promise<Task>;
+export interface TaskManagementFacade {
+  createTask(ctx: OperationContext, input: CreateTaskInput): Promise<Task>;
 }
 
-export function createProjectManagementFacade(...): ProjectManagementFacade;
+export function createTaskManagementFacade(...): TaskManagementFacade;
 ```
 
 The variable name can stay natural:
 
 ```ts
-const projectManagement = createProjectManagementFacade(...);
+const taskManagement = createTaskManagementFacade(...);
 ```
 
 ### Use case
@@ -117,10 +117,10 @@ Use cases are appropriate for ordinary cross-module workflows.
 Example:
 
 ```txt
-create comment with mentions
-  -> comments
-  -> parties
-  -> inbox
+create message with mentions
+  -> discussion
+  -> users
+  -> notifications
 ```
 
 If a workflow grows its own durable vocabulary, events, policies, or operational
@@ -134,12 +134,12 @@ Examples:
 
 - durable event delivery worker;
 - work dispatch reaction;
-- execution loop;
+- job execution loop;
 - boot reconciliation;
 - queue worker.
 
 Processes may open multiple short transactions. They must not hold a database
-transaction across external runtime work, subprocess execution, long polling, or
+transaction across external worker work, subprocess execution, long polling, or
 streaming.
 
 ### Readmodel
@@ -151,13 +151,13 @@ They must not mutate state or publish events.
 
 ### Adapter
 
-An **adapter** connects Monitor to an external technical boundary.
+An **adapter** connects the system to an external technical boundary.
 
 There are two important kinds:
 
 1. **Repository/storage adapter** — persistence implementation for module-owned
    storage. This lives inside the owning module.
-2. **External integration adapter/client** — a runtime CLI, third-party client,
+2. **External integration adapter/client** — a worker CLI, third-party client,
    Git/filesystem/process integration, etc. This lives inside the consuming
    module unless it is shared/generic enough to justify a top-level
    `infrastructure/` home.
@@ -172,7 +172,7 @@ business rules.
 A folder under:
 
 ```txt
-packages/api/src/modules/<name>/
+src/modules/<name>/
 ```
 
 must represent a real module boundary.
@@ -194,14 +194,14 @@ misc/
 Prefer the smallest durable vocabulary/capability name:
 
 ```txt
-comments/
-inbox/
+discussion/
+notifications/
 events/
-execution/
-prompt-composition/
-work-dispatch/
-project-management/
-party-management/
+job-execution/
+content-composition/
+job-dispatch/
+task-management/
+identity/
 ```
 
 If something is not a module, put it somewhere else: a use case, process,
@@ -230,14 +230,14 @@ modules/<name>/
 For larger modules, `internal/` may contain subfolders:
 
 ```txt
-modules/execution/
+modules/job-execution/
   README.md
   index.ts
   facade.ts
   types.ts
   events.ts
   internal/
-    runs/
+    jobs/
     adapters/
     executor/
     lifecycle/
@@ -282,25 +282,25 @@ Example public exports:
 
 ```ts
 export {
-  createProjectManagementFacade,
-  type ProjectManagementFacade,
+  createTaskManagementFacade,
+  type TaskManagementFacade,
 } from "./facade.js";
 
 export type {
-  Project,
+  Workspace,
   Task,
   CreateTaskInput,
   UpdateTaskInput,
 } from "./types.js";
 
 export {
-  projectManagementEventTypes,
+  taskManagementEventTypes,
   type TaskCreatedEventPayload,
   type TaskUpdatedEventPayload,
 } from "./events.js";
 
 export {
-  ProjectNotFoundError,
+  WorkspaceNotFoundError,
   TaskNotFoundError,
   TaskHierarchyValidationError,
 } from "./errors.js";
@@ -328,11 +328,11 @@ are wired separately by composition root and passed explicitly where needed.
 Target shape:
 
 ```ts
-export interface MonitorOperationContext {
+export interface OperationContext {
   tx: TransactionContext;
 
   actor: {
-    partyId: string | null;
+    userId: string | null;
   };
 
   request: {
@@ -348,7 +348,7 @@ export interface MonitorOperationContext {
     ids: IdGenerator;
     clock: Clock;
     logger: Logger;
-    config: ApiRuntimeConfig;
+    config: ApiWorkerConfig;
   };
 }
 ```
@@ -365,10 +365,10 @@ ctx.platform  shared technical capabilities
 
 The context must not include:
 
-- `projectManagement`;
-- `comments`;
-- `inbox`;
-- `execution`;
+- `taskManagement`;
+- `discussion`;
+- `notifications`;
+- `job-execution`;
 - repositories;
 - readmodels;
 - route objects.
@@ -379,9 +379,9 @@ passed explicitly when the module/use case/process is created.
 
 ```ts
 const collaboration = createCollaborationUseCase({
-  comments,
-  inbox,
-  parties,
+  discussion,
+  notifications,
+  users,
 });
 ```
 
@@ -414,10 +414,10 @@ All DB-touching operations receive a context containing a transaction.
 Default public API style:
 
 ```ts
-projectManagement.createTask(ctx, input);
-comments.createComment(ctx, input);
-inbox.markRead(ctx, input);
-projectTaskReadModel.listWorkspaceTasks(ctx, input);
+taskManagement.createTask(ctx, input);
+discussion.createMessage(ctx, input);
+notifications.markRead(ctx, input);
+taskReadModel.listTasks(ctx, input);
 ```
 
 The transaction is explicit because transaction scope matters.
@@ -429,7 +429,7 @@ The unit of work owns transaction lifecycle:
 ```ts
 ctx.platform.unitOfWork.run(async (tx) => {
   const opCtx = createOperationContext(baseCtx, tx);
-  return projectManagement.createTask(opCtx, input);
+  return taskManagement.createTask(opCtx, input);
 });
 ```
 
@@ -446,7 +446,7 @@ The default is:
 However, some code is naturally process-like and may manage transactions
 internally:
 
-- long-running execution loops;
+- long-running job execution loops;
 - boot reconciliation;
 - event delivery workers;
 - queue workers;
@@ -460,7 +460,7 @@ transaction scopes.
 Never hold a DB transaction across:
 
 - subprocess execution;
-- runtime CLI execution;
+- worker CLI execution;
 - network calls that may take significant time;
 - SSE/streaming responses;
 - worker sleeps/polls;
@@ -470,7 +470,7 @@ Use multiple short transactions:
 
 ```txt
 transaction: claim work
-no transaction: execute external runtime
+no transaction: execute external worker
 transaction: persist result
 ```
 
@@ -487,8 +487,8 @@ request. Some requests stream, wait, or perform long-running work.
 The route chooses the transaction boundary explicitly, ideally through a helper:
 
 ```ts
-return request.monitor.runInTransaction((ctx) =>
-  projectManagement.createTask(ctx, body),
+return request.app.runInTransaction((ctx) =>
+  taskManagement.createTask(ctx, body),
 );
 ```
 
@@ -536,8 +536,8 @@ Preferred shape:
 server.post("/tasks", async (request, reply) => {
   const body = createTaskBodySchema.parse(request.body);
 
-  const result = await request.monitor.runInTransaction((ctx) =>
-    projectManagement.createTask(ctx, body),
+  const result = await request.app.runInTransaction((ctx) =>
+    taskManagement.createTask(ctx, body),
   );
 
   return mapTaskToDto(result);
@@ -578,11 +578,11 @@ Storage schema belongs to the owning module.
 Target shape:
 
 ```txt
-modules/project-management/internal/schema.ts
-modules/party-management/internal/schema.ts
-modules/comments/internal/schema.ts
-modules/inbox/internal/schema.ts
-modules/execution/internal/schema.ts
+modules/task-management/internal/schema.ts
+modules/identity/internal/schema.ts
+modules/discussion/internal/schema.ts
+modules/notifications/internal/schema.ts
+modules/job-execution/internal/schema.ts
 modules/events/internal/schema.ts
 ```
 
@@ -590,9 +590,9 @@ A central schema file may exist only as an assembly/barrel for migrations,
 Drizzle setup, and readmodel imports:
 
 ```ts
-export * from "../../modules/project-management/internal/schema.js";
-export * from "../../modules/party-management/internal/schema.js";
-export * from "../../modules/comments/internal/schema.js";
+export * from "../../modules/task-management/internal/schema.js";
+export * from "../../modules/identity/internal/schema.js";
+export * from "../../modules/discussion/internal/schema.js";
 ```
 
 The central schema is technical assembly. Ownership remains with modules.
@@ -617,10 +617,10 @@ This is intentional. It supports:
 Examples:
 
 ```txt
-task.assigneeId        references party id
-comment.partyId        references party id
-inbox.recipientPartyId references party id
-run.agentPartyId       references party id
+task.assigneeId        references user id
+message.userId        references user id
+notifications.recipientUserId references user id
+job.workerUserId       references user id
 domainEvent.aggregateId references an aggregate id
 ```
 
@@ -637,11 +637,11 @@ semantics require it.
 Examples:
 
 - task storage may preserve an assignee id as a reference;
-- a user-facing “assign task to party” flow should validate the party exists
+- a user-facing “assign task to user” flow should validate the user exists
   and has the required kind if that matters;
-- comment history may preserve deleted/missing author ids;
-- mention workflow validates mentioned parties because it needs live recipients;
-- execution claim/preparation validates the live agent because it needs
+- message history may preserve deleted/missing author ids;
+- mention workflow validates mentioned users because it needs live recipients;
+- job execution claim/preparation validates the live worker because it needs
   instructions/provider config.
 
 Rule:
@@ -657,14 +657,14 @@ Rule:
 Readmodels live under:
 
 ```txt
-packages/api/src/readmodels/
+src/readmodels/
 ```
 
 They are route-facing, read-only query projections.
 
 Readmodels may:
 
-- receive `MonitorOperationContext`;
+- receive `OperationContext`;
 - query storage directly/read-only;
 - join across module-owned tables;
 - map query results toward route/API needs.
@@ -675,7 +675,7 @@ Readmodels must not:
 - publish events;
 - enforce command invariants;
 - become a place for business workflows;
-- call external runtimes/processes.
+- call external workers/processes.
 
 Readmodels are an intentional CQRS-style exception to repository privacy.
 They may know storage shape for efficient projections, but only for reads.
@@ -697,11 +697,11 @@ A module publishes events about things it owns.
 Examples:
 
 ```txt
-project-management publishes task/project lifecycle events
-party-management publishes party lifecycle events
-comments publishes comment lifecycle events
-inbox publishes inbox lifecycle events
-execution publishes run lifecycle events
+task-management publishes task lifecycle events
+identity publishes user lifecycle events
+discussion publishes message lifecycle events
+notifications publishes notifications lifecycle events
+job-execution publishes job lifecycle events
 ```
 
 Orchestration/use-case/process code may publish events only about workflows it
@@ -710,8 +710,8 @@ owns. It should not publish lifecycle events pretending to be another module.
 Example target:
 
 ```txt
-comments creates comment -> comments publishes comment.created
-collaboration coordinates comments + inbox -> collaboration does not publish comment.created
+discussion creates message -> discussion publishes message.created
+collaboration coordinates discussion + notifications -> collaboration does not publish message.created
 ```
 
 ### Public event contract
@@ -733,16 +733,16 @@ Private:
 Public event contract example:
 
 ```ts
-export const projectManagementEventTypes = {
+export const taskManagementEventTypes = {
   taskCreated: "task.created",
   taskUpdated: "task.updated",
 } as const;
 
 export interface TaskUpdatedEventPayload {
-  projectId: string;
+  workspaceId: string;
   taskId: string;
-  before: TaskMutableEventState;
-  after: TaskMutableEventState;
+  before: TaskMutableState;
+  after: TaskMutableState;
 }
 ```
 
@@ -763,7 +763,7 @@ await ctx.events.publish({
   type: "task.updated",
   aggregateType: "task",
   aggregateId: task.id,
-  sourceModule: "project-management",
+  sourceModule: "task-management",
   payload,
 });
 ```
@@ -799,7 +799,7 @@ Examples:
 ```json
 {
   "taskId": "...",
-  "projectId": "...",
+  "workspaceId": "...",
   "before": {
     "title": "Old title",
     "bodyMd": "...",
@@ -820,7 +820,7 @@ Avoid:
 - payloads with only ids when durable history needs semantic data;
 - full storage row snapshots;
 - transport DTOs as payload contracts;
-- arbitrary large stdout/stderr/prompt dumps.
+- arbitrary large stdout/stderr/content dumps.
 
 ### Subscribers
 
@@ -855,14 +855,14 @@ Ordinary cross-module workflows should not be hidden in routes.
 Allowed when justified:
 
 ```txt
-execution -> prompt-composition
-work-dispatch -> execution + parties
+job-execution -> content-composition
+job-dispatch -> job-execution + users
 ```
 
 Prefer use case/process for ordinary composition:
 
 ```txt
-create-comment-with-mentions -> comments + parties + inbox
+create-message-with-mentions -> discussion + users + notifications
 ```
 
 No module dependency cycles.
@@ -888,7 +888,7 @@ but they should not accumulate business authorization rules.
 Examples:
 
 - a task assignment workflow decides whether the actor can assign a task;
-- execution decides whether an agent/runtime can be used for a run;
+- job execution decides whether an worker can be used for a job;
 - maintenance decides whether reset is allowed in the current operational state.
 
 Actor attribution for events comes from context. Permission to perform the
@@ -924,11 +924,11 @@ Module errors should be specific and exported through the module public API.
 Prefer:
 
 ```ts
-ProjectNotFoundError
+WorkspaceNotFoundError
 TaskNotFoundError
 TaskHierarchyValidationError
-PartyNotFoundError
-ActiveRunsPresentError
+UserNotFoundError
+ActiveJobsPresentError
 ```
 
 Avoid vague names:
@@ -964,7 +964,7 @@ Unexpected errors bubble as 500-level failures.
 
 ## 18. Contracts package boundary
 
-`@monitor/contracts` owns the HTTP transport boundary only.
+`@app/contracts` owns the HTTP transport boundary only.
 
 It contains:
 
@@ -986,7 +986,7 @@ It does not contain:
 Module types/events are backend-local.
 
 Routes/readmodels map backend-local results to transport DTOs from
-`@monitor/contracts`.
+`@app/contracts`.
 
 The `/events` API may expose a generic transport event envelope from contracts,
 but module event payload types remain backend-local unless intentionally made a
@@ -1004,17 +1004,17 @@ they are shared/generic.
 Use:
 
 ```txt
-modules/execution/internal/runtime-adapters/
+modules/job-execution/internal/worker-adapters/
 ```
 
-when runtime adapters are execution-specific.
+when worker adapters are job-execution-specific.
 
 Use a top-level infrastructure area only for genuinely shared technical clients:
 
 ```txt
-packages/api/src/infrastructure/git/
-packages/api/src/infrastructure/process/
-packages/api/src/infrastructure/runtime-clients/
+src/infrastructure/git/
+src/infrastructure/process/
+src/infrastructure/worker-clients/
 ```
 
 Infrastructure code must not contain business rules. It implements technical
@@ -1035,7 +1035,7 @@ Example:
 
 ```ts
 await runWithTestContext(async (ctx) => {
-  const task = await projectManagement.createTask(ctx, input);
+  const task = await taskManagement.createTask(ctx, input);
   assert.equal(task.title, input.title);
 });
 ```
@@ -1058,10 +1058,10 @@ that dependency.
 Example:
 
 ```txt
-collaboration uses comments + inbox + parties
-  -> fake comments
-  -> fake inbox
-  -> fake parties
+collaboration uses discussion + notifications + users
+  -> fake discussion
+  -> fake notifications
+  -> fake users
   -> assert orchestration behavior
 ```
 
@@ -1070,10 +1070,10 @@ orchestration unit.
 
 ### Mixed modules
 
-For mixed modules such as execution:
+For mixed modules such as job-execution:
 
-- use real DB for storage the module owns, e.g. runs/run events;
-- mock/fake external adapters, runtime CLIs, prompt composition, or other module
+- use real DB for storage the module owns, e.g. jobs/job events;
+- mock/fake external adapters, worker CLIs, content composition, or other module
   facades as black boxes.
 
 ### Internal tests
@@ -1118,7 +1118,7 @@ It wires:
 - processes;
 - readmodels;
 - subscribers;
-- runtime/adapters;
+- worker/adapters;
 - init/shutdown hooks.
 
 Composition root should not need to import private repositories from modules.
@@ -1138,7 +1138,7 @@ Avoid these:
 Bad:
 
 ```ts
-import { createTaskRepository } from "../project-management/internal/repositories.js";
+import { createTaskRepository } from "../task-management/internal/repositories.js";
 ```
 
 Use the facade or a named use case/process.
@@ -1148,8 +1148,8 @@ Use the facade or a named use case/process.
 Bad:
 
 ```ts
-// collaboration publishing comment.created
-await ctx.events.publish({ sourceModule: "comments", type: "comment.created", ... });
+// collaboration publishing message.created
+await ctx.events.publish({ sourceModule: "discussion", type: "message.created", ... });
 ```
 
 The owning module publishes its own lifecycle events.
@@ -1159,9 +1159,9 @@ The owning module publishes its own lifecycle events.
 Bad:
 
 ```ts
-const comment = await comments.createComment(ctx, input);
-await inbox.createMentionItem(ctx, ...);
-await execution.requestRun(ctx, ...);
+const message = await discussion.createMessage(ctx, input);
+await notifications.createMentionItem(ctx, ...);
+await jobExecution.requestJob(ctx, ...);
 ```
 
 Create a named use case/process.
@@ -1194,7 +1194,7 @@ Use a minimal semantic event payload.
 Bad default:
 
 ```txt
-tasks.assignee_id -> parties.id FK
+tasks.assignee_id -> users.id FK
 ```
 
 Prefer opaque references unless the coupling is deliberately accepted.
@@ -1204,7 +1204,7 @@ Prefer opaque references unless the coupling is deliberately accepted.
 Bad:
 
 ```ts
-ctx.projectManagement.createTask(ctx, input)
+ctx.taskManagement.createTask(ctx, input)
 ```
 
 Context is who/how. Modules are what.
