@@ -97,3 +97,12 @@ const { title, description, ogImage } = Astro.props;
     </script>
   </>
 )}
+
+<!-- Umami Analytics -->
+{import.meta.env.PROD && (
+  <script
+    defer
+    src="https://analytics.kubaszwajka.com/script.js"
+    data-website-id="e8119e14-bc31-4edd-a61b-0c1864fe5438"
+  />
+)}
