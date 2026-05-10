@@ -79,6 +79,12 @@ a:hover {
 	text-decoration: underline;
 }
 
+a:focus-visible,
+button:focus-visible {
+	outline: 2px solid var(--accent);
+	outline-offset: 3px;
+}
+
 p {
 	margin-bottom: 1em;
 }
@@ -157,7 +163,7 @@ textarea, input {
 	padding: 0.5rem;
 }
 
-textarea:focus, input:focus {
+textarea:focus-visible, input:focus-visible {
 	outline: 2px solid var(--accent);
 	outline-offset: 2px;
 }

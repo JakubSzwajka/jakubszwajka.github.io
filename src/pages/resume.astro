@@ -21,12 +21,13 @@ import { SITE_TITLE, GITHUB_URL, LINKEDIN_URL, TWITTER_URL, EMAIL } from '../con
 				<header class="resume-header">
 					<div class="resume-intro">
 						<h1>Jakub Szwajka</h1>
+						<p class="eyebrow">CREDENTIAL TRACE</p>
 						<p class="subtitle">Senior Full Stack Engineer</p>
 						<p class="location">Wrocław, Poland · Remote (EU/US timezones)</p>
 						<div class="resume-links">
-							<a href={GITHUB_URL} target="_blank"><i class="ph-bold ph-github-logo"></i> GitHub</a>
-							<a href={LINKEDIN_URL} target="_blank"><i class="ph-bold ph-linkedin-logo"></i> LinkedIn</a>
-							<a href={TWITTER_URL} target="_blank"><i class="ph-bold ph-x-logo"></i> X</a>
+							<a href={GITHUB_URL} target="_blank" rel="noopener noreferrer"><i class="ph-bold ph-github-logo"></i> GitHub</a>
+							<a href={LINKEDIN_URL} target="_blank" rel="noopener noreferrer"><i class="ph-bold ph-linkedin-logo"></i> LinkedIn</a>
+							<a href={TWITTER_URL} target="_blank" rel="noopener noreferrer"><i class="ph-bold ph-x-logo"></i> X</a>
 							<a href={`mailto:${EMAIL}`}><i class="ph-bold ph-envelope-simple"></i> Email</a>
 						</div>
 					</div>
@@ -229,6 +230,16 @@ import { SITE_TITLE, GITHUB_URL, LINKEDIN_URL, TWITTER_URL, EMAIL } from '../con
 		margin-bottom: 0.25rem;
 	}
 
+	.eyebrow {
+		font-family: 'Space Grotesk', sans-serif;
+		font-size: 0.75rem;
+		font-weight: 700;
+		letter-spacing: 0.14em;
+		text-transform: uppercase;
+		color: var(--text-dim);
+		margin-bottom: 0.5rem;
+	}
+
 	.subtitle {
 		font-family: 'Space Grotesk', sans-serif;
 		font-size: 1.1rem;
@@ -255,7 +266,8 @@ import { SITE_TITLE, GITHUB_URL, LINKEDIN_URL, TWITTER_URL, EMAIL } from '../con
 		transition: color 0.2s;
 	}
 
-	.resume-links a:hover {
+	.resume-links a:hover,
+	.resume-links a:focus-visible {
 		color: var(--accent);
 		text-decoration: none;
 	}
@@ -282,7 +294,8 @@ import { SITE_TITLE, GITHUB_URL, LINKEDIN_URL, TWITTER_URL, EMAIL } from '../con
 		flex-shrink: 0;
 	}
 
-	.download-btn:hover {
+	.download-btn:hover,
+	.download-btn:focus-visible {
 		background: var(--accent);
 		color: var(--bg-color);
 		text-decoration: none;
@@ -377,8 +390,9 @@ import { SITE_TITLE, GITHUB_URL, LINKEDIN_URL, TWITTER_URL, EMAIL } from '../con
 	/* Projects */
 	.project {
 		margin-bottom: 1.5rem;
-		padding-left: 1rem;
-		border-left: 2px solid var(--border-color);
+		padding: 1rem;
+		border: 1px solid var(--border-color);
+		background: color-mix(in srgb, var(--bg-panel) 28%, transparent);
 	}
 
 	.project h4 {

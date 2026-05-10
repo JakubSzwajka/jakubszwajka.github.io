@@ -2,13 +2,15 @@
 import BaseHead from '../components/BaseHead.astro';
 import Footer from '../components/Footer.astro';
 import MainNav from '../components/MainNav.astro';
+import PageHeader from '../components/PageHeader.astro';
 import { SITE_TITLE } from '../consts';
 
-const portfolioItems = [
+const labArtifacts = [
 	{
 		id: 1,
 		title: 'MyDanceDNA',
-		description: 'Directory platform for dancers — search schools, instructors, and courses by style, location, or price.',
+		status: 'Directory platform',
+		description: 'A search surface for dancers to find schools, instructors, and courses by style, location, or price.',
 		link: 'https://www.mydancedna.com',
 		image: '/projects/mydancedna/hero.png',
 		screenshots: [
@@ -21,7 +23,8 @@ const portfolioItems = [
 	{
 		id: 2,
 		title: 'No Noise Letter',
-		description: 'Source-aware private briefings — set the topics once, then get a calm newsletter with the useful signal cut out of the feed noise.',
+		status: 'Signal extraction experiment',
+		description: 'Source-aware private briefings: set the topics once, then get a calm newsletter with the useful signal cut out of the feed noise.',
 		link: 'https://nonoiseletter.com',
 		image: '/projects/nonoiseletter/hero.png',
 		screenshots: [
@@ -39,7 +42,7 @@ const portfolioItems = [
 	<head>
 		<BaseHead
 			title={`Projects // ${SITE_TITLE}`}
-			description="Selected projects by Kuba Szwajka"
+			description="Lab artifacts and shipped experiments by Kuba Szwajka"
 		/>
 	</head>
 	<body>
@@ -47,7 +50,13 @@ const portfolioItems = [
 			<MainNav />
 
 			<main class="content-area">
-				{portfolioItems.map((item) => (
+				<PageHeader
+					eyebrow="LAB ARTIFACTS"
+					title="Projects"
+					description="Things I shipped, tested, or used as a workbench. Not every artifact is a polished case study; the point is to show traces of building."
+				/>
+
+				{labArtifacts.map((item) => (
 					<article class="project">
 						<div class="project-image-container">
 							{item.screenshots && item.screenshots.length > 0 ? (
@@ -58,16 +67,18 @@ const portfolioItems = [
 												src={screenshot}
 												alt={`${item.title} screenshot ${index + 1}`}
 												class={`carousel-image ${index === 0 ? 'active' : ''}`}
+												loading={index === 0 ? 'eager' : 'lazy'}
 											/>
 										))}
 									</div>
 									{item.screenshots.length > 1 && (
-										<div class="carousel-dots">
+										<div class="carousel-dots" aria-label={`${item.title} screenshots`}>
 											{item.screenshots.map((_, index) => (
 												<button
 													class={`carousel-dot ${index === 0 ? 'active' : ''}`}
 													data-index={index}
-													aria-label={`View screenshot ${index + 1}`}
+													aria-label={`View ${item.title} screenshot ${index + 1}`}
+													aria-pressed={index === 0 ? 'true' : 'false'}
 												></button>
 											))}
 										</div>
@@ -83,15 +94,16 @@ const portfolioItems = [
 						</div>
 
 						<div class="project-info">
-							<h3>
+							<p class="project-status">{item.status}</p>
+							<h2>
 								{item.link ? (
-									<a href={item.link} target={item.link.startsWith('http') ? '_blank' : '_self'}>{item.title} →</a>
+									<a href={item.link} target={item.link.startsWith('http') ? '_blank' : '_self'} rel="noopener noreferrer">{item.title} →</a>
 								) : (
 									item.title
 								)}
-							</h3>
+							</h2>
 							<p>{item.description}</p>
-							<div class="tags">
+							<div class="tags" aria-label={`${item.title} stack`}>
 								{item.tags.map((tag) => (
 									<span class="tag">{tag}</span>
 								))}
@@ -116,9 +128,11 @@ const portfolioItems = [
 						dot.addEventListener('click', () => {
 							images[currentIndex].classList.remove('active');
 							dots[currentIndex].classList.remove('active');
+							dots[currentIndex].setAttribute('aria-pressed', 'false');
 							currentIndex = index;
 							images[currentIndex].classList.add('active');
 							dots[currentIndex].classList.add('active');
+							dots[currentIndex].setAttribute('aria-pressed', 'true');
 						});
 					});
 				});
@@ -130,12 +144,28 @@ const portfolioItems = [
 <style>
 	.content-area {
 		padding: 2rem;
-		max-width: 800px;
+		max-width: 900px;
 		margin: 0 auto;
 	}
 
+	.project-status {
+		font-family: 'Space Grotesk', sans-serif;
+		font-size: 0.75rem;
+		font-weight: 700;
+		letter-spacing: 0.14em;
+		text-transform: uppercase;
+		color: var(--text-dim);
+		margin-bottom: 0.5rem;
+	}
+
 	.project {
-		margin-bottom: 3rem;
+		display: grid;
+		grid-template-columns: minmax(0, 1.15fr) minmax(260px, 0.85fr);
+		gap: 1.5rem;
+		padding: 1rem;
+		margin-bottom: 1.5rem;
+		border: 1px solid var(--border-color);
+		background: color-mix(in srgb, var(--bg-panel) 38%, transparent);
 	}
 
 	.project-image-container {
@@ -143,7 +173,8 @@ const portfolioItems = [
 		width: 100%;
 		aspect-ratio: 16 / 10;
 		overflow: hidden;
-		margin-bottom: 1rem;
+		border: 1px solid var(--border-color);
+		background: var(--bg-panel);
 	}
 
 	.project-image {
@@ -165,13 +196,7 @@ const portfolioItems = [
 		font-family: 'JetBrains Mono', monospace;
 	}
 
-	/* CAROUSEL */
-	.carousel {
-		position: relative;
-		width: 100%;
-		height: 100%;
-	}
-
+	.carousel,
 	.carousel-inner {
 		position: relative;
 		width: 100%;
@@ -186,7 +211,7 @@ const portfolioItems = [
 		top: 0;
 		left: 0;
 		opacity: 0;
-		transition: opacity 0.4s ease;
+		transition: opacity 0.25s ease;
 	}
 
 	.carousel-image.active {
@@ -200,18 +225,19 @@ const portfolioItems = [
 		left: 50%;
 		transform: translateX(-50%);
 		display: flex;
-		gap: 0.4rem;
+		gap: 0.5rem;
+		padding: 0.4rem;
+		background: color-mix(in srgb, var(--bg-color) 78%, transparent);
+		border: 1px solid var(--border-color);
 	}
 
 	.carousel-dot {
-		width: 8px;
-		height: 8px;
-		border-radius: 50%;
+		width: 10px;
+		height: 10px;
 		border: 1px solid var(--text-dim);
 		background: transparent;
 		cursor: pointer;
 		padding: 0;
-		transition: background 0.2s;
 	}
 
 	.carousel-dot.active {
@@ -219,43 +245,56 @@ const portfolioItems = [
 		border-color: var(--accent);
 	}
 
-	/* PROJECT INFO */
-	.project-info h3 {
-		font-family: 'Space Grotesk', sans-serif;
-		font-size: 1.1rem;
-		margin-bottom: 0.5rem;
+	.project-info {
+		align-self: center;
 	}
 
-	.project-info h3 a {
+	.project-info h2 {
+		font-family: 'Space Grotesk', sans-serif;
+		font-size: 1.35rem;
+		margin-bottom: 0.75rem;
+	}
+
+	.project-info h2 a {
 		color: var(--text-main);
 		text-decoration: none;
 		transition: color 0.15s;
 	}
 
-	.project-info h3 a:hover {
+	.project-info h2 a:hover,
+	.project-info h2 a:focus-visible {
 		color: var(--accent);
+		text-decoration: none;
 	}
 
-	.project-info p {
+	.project-info p:not(.project-status) {
 		color: var(--text-dim);
 		font-size: 0.9rem;
-		line-height: 1.6;
-		margin-bottom: 0.75rem;
+		line-height: 1.7;
+		margin-bottom: 1rem;
 	}
 
 	.tags {
 		display: flex;
 		flex-wrap: wrap;
-		gap: 0.4rem;
+		gap: 0.5rem;
 	}
 
 	.tag {
-		font-size: 0.7rem;
+		padding: 0.15rem 0.35rem;
+		border: 1px solid var(--border-color);
+		font-size: 0.68rem;
 		color: var(--text-dim);
+		background: var(--bg-color);
 	}
 
-	.tag:not(:last-child)::after {
-		content: '·';
-		margin-left: 0.4rem;
+	@media (max-width: 760px) {
+		.content-area {
+			padding: 1.5rem 1rem;
+		}
+
+		.project {
+			grid-template-columns: 1fr;
+		}
 	}
 </style>

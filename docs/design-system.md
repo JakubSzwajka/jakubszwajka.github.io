@@ -2,6 +2,13 @@
 
 This site uses a small, code-first design system defined mostly in [`src/styles/global.css`](../src/styles/global.css). Treat that file as the source of truth for global tokens and base element styles.
 
+Durable design doctrine now lives in [`docs/knowledge/design/`](knowledge/design/):
+
+- [`principles.md`](knowledge/design/principles.md) — product/design intent
+- [`brand.md`](knowledge/design/brand.md) — visual direction
+- [`copy-voice.md`](knowledge/design/copy-voice.md) — language and tone
+- [`components.md`](knowledge/design/components.md) — reusable UI conventions
+
 ## Design direction
 
 **Brutalist dark portfolio/blog.**

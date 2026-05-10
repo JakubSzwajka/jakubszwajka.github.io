@@ -3,6 +3,7 @@ import type { CollectionEntry } from 'astro:content';
 import BaseHead from '../components/BaseHead.astro';
 import Footer from '../components/Footer.astro';
 import MainNav from '../components/MainNav.astro';
+import PageHeader from '../components/PageHeader.astro';
 
 type TocHeading = {
 	depth: number;
@@ -36,13 +37,11 @@ function formatDate(date: Date): string {
 			<MainNav />
 
 			<article class="blog-post">
-				<header class="post-header">
-					<span class="date">{formatDate(pubDate)}</span>
-					<h1>{title}</h1>
-					<div class="post-actions">
+				<PageHeader class="post-header" meta={formatDate(pubDate)} eyebrow="LAB NOTE" title={title}>
+					<div slot="actions" class="post-actions">
 						<a href={`/blog/${id}.txt`} class="raw-link" target="_blank" rel="noopener noreferrer">Raw text for LLM</a>
 					</div>
-				</header>
+				</PageHeader>
 
 				{tocHeadings.length > 0 && (
 					<nav class="toc" aria-label="Table of contents">
@@ -100,24 +99,10 @@ function formatDate(date: Date): string {
 		/* Container styles handled by wrapper */
 	}
 
-	.post-header {
+	:global(.post-header) {
 		padding: 2rem;
 		max-width: 800px;
 		margin: 0 auto;
-	}
-
-	.date {
-		font-size: 0.8rem;
-		color: var(--text-dim);
-		display: block;
-		margin-bottom: 0.5rem;
-	}
-
-	.post-header h1 {
-		font-family: 'Space Grotesk', sans-serif;
-		font-size: 1.5rem;
-		line-height: 1.2;
-		margin: 0;
 	}
 
 	.post-actions {
@@ -137,7 +122,8 @@ function formatDate(date: Date): string {
 		text-decoration: none;
 	}
 
-	.raw-link:hover {
+	.raw-link:hover,
+	.raw-link:focus-visible {
 		background: var(--accent);
 		color: var(--bg-color);
 		text-decoration: none;
@@ -188,6 +174,7 @@ function formatDate(date: Date): string {
 	}
 
 	.toc a:hover,
+	.toc a:focus-visible,
 	.toc a.is-active {
 		color: var(--accent);
 		text-decoration: none;
@@ -318,8 +305,19 @@ function formatDate(date: Date): string {
 	}
 
 	@media (min-width: 900px) {
+		:global(.post-header),
+		.prose,
 		.post-footer {
-			padding: 2rem 4rem;
+			max-width: 800px;
+			margin-left: 4rem;
+			margin-right: auto;
+			padding-left: 0;
+			padding-right: 0;
+		}
+
+		.post-footer {
+			padding-top: 2rem;
+			padding-bottom: 2rem;
 		}
 	}
 

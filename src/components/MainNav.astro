@@ -1,6 +1,7 @@
 ---
 import { GITHUB_URL, LINKEDIN_URL, TWITTER_URL, EMAIL } from '../consts';
-const currentPath = Astro.url.pathname;
+const normalizePath = (path: string) => path.replace(/\/$/, '') || '/';
+const currentPath = normalizePath(Astro.url.pathname);
 ---
 
 <nav class="main-nav">
@@ -19,13 +20,13 @@ const currentPath = Astro.url.pathname;
 		</div>
 		<span class="nav-divider">|</span>
 		<div class="nav-socials">
-			<a href={GITHUB_URL} class="nav-social" target="_blank" aria-label="GitHub">
+			<a href={GITHUB_URL} class="nav-social" target="_blank" rel="noopener noreferrer" aria-label="GitHub">
 				<i class="ph-bold ph-github-logo"></i>
 			</a>
-			<a href={LINKEDIN_URL} class="nav-social" target="_blank" aria-label="LinkedIn">
+			<a href={LINKEDIN_URL} class="nav-social" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn">
 				<i class="ph-bold ph-linkedin-logo"></i>
 			</a>
-			<a href={TWITTER_URL} class="nav-social" target="_blank" aria-label="X">
+			<a href={TWITTER_URL} class="nav-social" target="_blank" rel="noopener noreferrer" aria-label="X">
 				<i class="ph-bold ph-x-logo"></i>
 			</a>
 			<a href={`mailto:${EMAIL}`} class="nav-social" aria-label="Email">
@@ -46,10 +47,8 @@ const currentPath = Astro.url.pathname;
 		font-size: 1rem;
 		text-transform: uppercase;
 		letter-spacing: 1px;
-		width: 100vw;
+		width: 100%;
 		position: relative;
-		left: 50%;
-		transform: translateX(-50%);
 	}
 
 	@media (min-width: 900px) {
@@ -141,11 +140,28 @@ const currentPath = Astro.url.pathname;
 	@media (max-width: 600px) {
 		.main-nav {
 			padding: 1rem;
-			font-size: 0.85rem;
+			font-size: 0.8rem;
+			align-items: flex-start;
+			flex-direction: column;
+			gap: 0.75rem;
+		}
+
+		.nav-brand {
+			font-size: 0.95rem;
+		}
+
+		.nav-right,
+		.nav-links {
+			width: 100%;
 		}
 
 		.nav-links {
-			gap: 1.5rem;
+			justify-content: space-between;
+			gap: 0.75rem;
+		}
+
+		.nav-item.active::after {
+			bottom: -0.75rem;
 		}
 
 		.nav-socials {
