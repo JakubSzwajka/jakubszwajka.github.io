@@ -6,8 +6,6 @@ tags: ['Software Design', 'AI', 'Architecture']
 draft: false
 ---
 
-# On How To Write Software
-
 I wrote this originally as an internal architecture agreement for one of my projects. The more I use coding agents, the more useful this kind of document becomes: not as a grand theory of software, but as a shared contract for how humans and agents should shape code together. It gives the agent a vocabulary, boundaries, and defaults before it starts editing files.
 
 This document defines how I want a software system to be structured as it grows.

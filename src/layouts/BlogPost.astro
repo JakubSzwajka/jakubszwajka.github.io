@@ -101,8 +101,8 @@ function formatDate(date: Date): string {
 
 	:global(.post-header) {
 		padding: 2rem;
-		max-width: 800px;
-		margin: 0 auto;
+		max-width: none;
+		margin: 0;
 	}
 
 	.post-actions {
@@ -130,13 +130,16 @@ function formatDate(date: Date): string {
 	}
 
 	.toc {
+		display: none;
 		position: fixed;
 		top: 7rem;
-		left: calc(50% + 430px);
+		/* Keep the ToC outside the main app silo, directly beside the wrapper. */
+		left: calc(50% + 600px + 2rem);
 		width: 280px;
 		max-height: calc(100vh - 9rem);
 		overflow-y: auto;
 		padding: 1rem;
+		border-left: 1px solid var(--border-color);
 		background: color-mix(in srgb, var(--bg-color) 92%, transparent);
 		backdrop-filter: blur(8px);
 		font-size: 0.75rem;
@@ -187,8 +190,8 @@ function formatDate(date: Date): string {
 	/* Prose content styling */
 	.prose {
 		padding: 2rem;
-		max-width: 800px;
-		margin: 0 auto;
+		max-width: none;
+		margin: 0;
 	}
 
 	/* Global prose styles */
@@ -294,11 +297,11 @@ function formatDate(date: Date): string {
 		border-top: 1px solid var(--border-color);
 		display: flex;
 		justify-content: space-between;
-		max-width: 800px;
-		margin: 0 auto;
+		max-width: none;
+		margin: 0;
 	}
 
-	@media (max-width: 1450px) {
+	@media (max-width: 1840px) {
 		.toc {
 			display: none;
 		}
@@ -308,16 +311,35 @@ function formatDate(date: Date): string {
 		:global(.post-header),
 		.prose,
 		.post-footer {
-			max-width: 800px;
-			margin-left: 4rem;
-			margin-right: auto;
-			padding-left: 0;
-			padding-right: 0;
+			padding-left: 4rem;
+			padding-right: 4rem;
 		}
 
 		.post-footer {
 			padding-top: 2rem;
 			padding-bottom: 2rem;
+		}
+	}
+
+	@media (max-width: 600px) {
+		:global(.post-header),
+		.prose,
+		.post-footer {
+			padding-left: 1.5rem;
+			padding-right: 1.5rem;
+		}
+
+		.prose :global(h2) {
+			font-size: 1.55rem;
+			margin-top: 2.5rem;
+		}
+
+		.prose :global(h3) {
+			font-size: 1.25rem;
+		}
+
+		.prose :global(p) {
+			line-height: 1.75;
 		}
 	}
 
