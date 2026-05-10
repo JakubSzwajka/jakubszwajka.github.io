@@ -32,14 +32,13 @@ const years = Object.keys(postsByYear).sort((a, b) => Number(b) - Number(a));
 		<BaseHead title={SITE_TITLE} description={SITE_DESCRIPTION} />
 	</head>
 	<body>
-		<div class="wrapper">
-			<MainNav />
+		<MainNav />
 
+		<div class="wrapper">
 			<!-- HERO SECTION -->
 			<header class="hero">
 				<div class="hero-info">
 					<p class="eyebrow">PUBLIC TECHNICAL LAB</p>
-					<h1 class="glitch-hover">KUBA SZWAJKA</h1>
 					<p class="hero-description">
 						Notes, experiments, build logs, and software thoughts from the things I am trying to understand or ship.
 					</p>
@@ -93,17 +92,6 @@ const years = Object.keys(postsByYear).sort((a, b) => Number(b) - Number(a));
 		text-transform: uppercase;
 		color: var(--text-dim);
 		margin-bottom: 0.5rem;
-	}
-
-	.hero-info h1 {
-		font-family: 'Space Grotesk', sans-serif;
-		font-size: clamp(2.25rem, 8vw, 5.5rem);
-		font-weight: 700;
-		line-height: 0.9;
-		text-transform: uppercase;
-		margin-bottom: 1.5rem;
-		letter-spacing: -0.06em;
-		color: var(--accent);
 	}
 
 	.hero-description {
