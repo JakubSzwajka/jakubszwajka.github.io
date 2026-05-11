@@ -1,0 +1,65 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Other page shape mock — lab index system</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&family=Space+Grotesk:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#0d0d0d;--panel:#141414;--text:#e0e0e0;--dim:#999;--line:#333;--acid:#ccff00;--grid:rgba(255,255,255,.04)}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--text);font-family:'JetBrains Mono',monospace;line-height:1.65}a{color:inherit;text-decoration:none}.page{min-height:100vh;background-image:linear-gradient(var(--grid) 1px,transparent 1px),linear-gradient(90deg,var(--grid) 1px,transparent 1px);background-size:56px 56px}.inner{width:min(100% - 48px,1360px);margin:0 auto}.nav{border-bottom:1px solid var(--line);background:rgba(13,13,13,.94)}.nav .inner{padding:22px 0;display:flex;justify-content:space-between;gap:24px;align-items:center}.brand{font:700 15px 'Space Grotesk';letter-spacing:.1em;text-transform:uppercase;color:var(--acid)}.links{display:flex;gap:28px}.links a{font:700 12px 'Space Grotesk';letter-spacing:.1em;text-transform:uppercase;color:var(--dim)}.links a:hover{color:var(--acid)}.mock-nav{position:sticky;top:0;z-index:4}.mock-tabs{border-bottom:1px solid var(--line);background:var(--bg)}.mock-tabs .inner{display:flex;gap:8px;overflow:auto}.mock-tabs a{padding:12px 14px;border-left:1px solid var(--line);border-right:1px solid var(--line);font:700 11px 'Space Grotesk';letter-spacing:.12em;text-transform:uppercase;color:var(--dim)}.mock-tabs a:hover{color:var(--acid)}
+.page-section{border-bottom:1px solid var(--line);padding:56px 0 82px}.page-head{display:grid;grid-template-columns:180px minmax(0,860px) 260px;gap:32px;align-items:end;margin-bottom:46px}.eyebrow{font:700 12px 'Space Grotesk';letter-spacing:.18em;text-transform:uppercase;color:var(--acid)}.page-head h1{font:700 clamp(40px,7vw,92px)/.9 'Space Grotesk';letter-spacing:-.055em;margin:0}.page-head p{color:var(--dim);font-size:14px;margin:18px 0 0}.ledger{border-left:1px solid var(--line);padding-left:22px}.ledger div{border-bottom:1px solid var(--line);padding:10px 0;font-size:12px}.ledger span{color:var(--dim);text-transform:uppercase;display:block;font-size:10px}.label{font:700 12px 'Space Grotesk';letter-spacing:.15em;text-transform:uppercase;color:var(--dim)}.chip{border:1px solid var(--line);padding:2px 6px;color:var(--dim);font-size:10px;background:rgba(13,13,13,.82)}.button{display:inline-flex;border:1px solid var(--line);padding:10px 12px;font:700 12px 'Space Grotesk';letter-spacing:.1em;text-transform:uppercase}.button:hover{background:var(--acid);border-color:var(--acid);color:var(--bg)}
+/* projects */.project-list{border-top:1px solid var(--line)}.project-row{display:grid;grid-template-columns:150px minmax(260px,.75fr) minmax(0,1fr) 220px;gap:24px;align-items:start;padding:30px 0;border-bottom:1px solid var(--line)}.project-row h2{font:700 clamp(30px,4vw,54px)/.95 'Space Grotesk';letter-spacing:-.04em;margin:0}.project-row p{color:var(--dim);font-size:13px;margin:0}.stack{display:flex;gap:6px;flex-wrap:wrap;justify-content:flex-end}.screen-strip{grid-column:2/5;height:180px;border:1px solid var(--line);background:linear-gradient(135deg,#171717,#0d0d0d);margin-top:6px;position:relative;overflow:hidden}.screen-strip:before{content:'SCREENSHOT STRIP / OPTIONAL';position:absolute;left:18px;bottom:16px;color:var(--dim);font-size:11px}.screen-strip:after{content:'';position:absolute;inset:18px;border:1px solid rgba(255,255,255,.12)}
+/* blog post */.post-layout{display:grid;grid-template-columns:220px minmax(0,820px) 1fr;gap:48px}.toc{font-size:12px;color:var(--dim);position:sticky;top:88px;align-self:start;border-left:1px solid var(--line);padding-left:16px}.toc b{display:block;color:var(--text);font:700 12px 'Space Grotesk';letter-spacing:.14em;text-transform:uppercase;margin-bottom:14px}.toc a{display:block;margin:0 0 10px}.toc a:hover{color:var(--acid)}.article{max-width:820px}.article h1{font:700 clamp(42px,6vw,78px)/.92 'Space Grotesk';letter-spacing:-.055em;margin:0 0 18px}.meta{display:flex;justify-content:space-between;gap:20px;border-bottom:1px solid var(--line);padding-bottom:22px;margin-bottom:42px;color:var(--dim);font-size:12px;text-transform:uppercase}.prose h2{font:700 30px 'Space Grotesk';border-top:1px solid var(--line);padding-top:24px;margin-top:48px}.prose p{color:var(--dim);font-size:15px;margin-bottom:24px}.post-side{border-top:1px solid var(--line);padding-top:14px;color:var(--dim);font-size:12px}.post-side a{display:block;border-bottom:1px solid var(--line);padding:10px 0}.post-side a:hover{color:var(--acid)}
+/* resume */.resume-layout{display:grid;grid-template-columns:320px minmax(0,880px);gap:72px}.resume-rail{position:sticky;top:88px;align-self:start;border-top:1px solid var(--line);padding-top:18px}.resume-rail h2{font:700 34px 'Space Grotesk';line-height:1;margin:0 0 8px}.resume-rail p{color:var(--dim);font-size:13px}.resume-main{border-top:1px solid var(--line)}.resume-row{display:grid;grid-template-columns:180px 1fr;gap:30px;padding:26px 0;border-bottom:1px solid var(--line)}.resume-row h3{font:700 13px 'Space Grotesk';letter-spacing:.14em;text-transform:uppercase;margin:0;color:var(--dim)}.resume-row h4{font:700 22px 'Space Grotesk';margin:0 0 4px}.resume-row p,.resume-row li{color:var(--dim);font-size:13px}.resume-row ul{margin:12px 0 0;padding-left:18px}.trait-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px}.trait{border:1px solid var(--line);padding:14px;background:rgba(20,20,20,.44)}
+.footer{border-top:1px solid var(--line)}.footer .inner{padding:28px 0;display:flex;justify-content:space-between;color:var(--dim);font-size:12px;text-transform:uppercase}
+@media(max-width:900px){.inner{width:min(100% - 36px,1360px)}.nav .inner{align-items:flex-start;flex-direction:column}.links{width:100%;justify-content:space-between;gap:12px}.page-head,.post-layout,.resume-layout{display:block}.ledger,.resume-rail{border-left:0;border-top:1px solid var(--line);padding:18px 0 0;margin-top:30px;position:static}.project-row,.resume-row{grid-template-columns:1fr;gap:10px}.screen-strip{grid-column:auto}.stack{justify-content:flex-start}.toc,.post-side{display:none}.trait-grid{grid-template-columns:1fr}.footer .inner{flex-direction:column;gap:8px}}
+</style>
+</head>
+<body>
+<div class="page">
+<div class="mock-nav"><nav class="nav"><div class="inner"><a class="brand">Kuba Szwajka</a><div class="links"><a>Home</a><a>Projects</a><a>Resume</a></div></div></nav><div class="mock-tabs"><div class="inner"><a href="#projects">Projects shape</a><a href="#post">Blog post shape</a><a href="#resume">Resume shape</a></div></div></div>
+
+<section class="page-section" id="projects">
+  <div class="inner">
+    <header class="page-head">
+      <div class="eyebrow">LAB ARTIFACTS</div>
+      <div><h1>Projects</h1><p>Things shipped, tested, or used as a workbench. Same full-width lab index shell as homepage, but with more room for screenshots when needed.</p></div>
+      <aside class="ledger"><div><span>shape</span> artifact rows</div><div><span>width</span> 1360 lab shell</div></aside>
+    </header>
+    <div class="project-list">
+      <article class="project-row"><span class="label">artifact / 001</span><h2>MyDanceDNA →</h2><p>A search surface for dancers to find schools, instructors, and courses by style, location, or price.</p><div class="stack"><span class="chip">PYTHON</span><span class="chip">FASTAPI</span><span class="chip">REACT</span><span class="chip">POSTGRESQL</span></div><div class="screen-strip"></div></article>
+      <article class="project-row"><span class="label">artifact / 002</span><h2>No Noise Letter →</h2><p>Source-aware private briefings: set the topics once, then get useful signal cut out of feed noise.</p><div class="stack"><span class="chip">TYPESCRIPT</span><span class="chip">REACT</span><span class="chip">FASTIFY</span><span class="chip">AI</span></div><div class="screen-strip"></div></article>
+    </div>
+  </div>
+</section>
+
+<section class="page-section" id="post">
+  <div class="inner post-layout">
+    <nav class="toc"><b>Contents</b><a>Why this broke</a><a>The system shape</a><a>Tradeoffs</a><a>What I would change</a></nav>
+    <article class="article">
+      <div class="meta"><span class="eyebrow">LAB NOTE</span><span>11 MAY 2026</span></div>
+      <h1>Skills, specs, loops, and AI workflows</h1>
+      <div class="prose"><p>This page keeps the reading column calm. It may sit inside the same wider outer shell, but the text itself stays constrained around 820px.</p><h2>Readable first</h2><p>The homepage and projects can use horizontal room. A specific post should not. The wide area is for side chrome: table of contents, raw text, previous/next, metadata.</p><h2>Same family, different density</h2><p>The post shape should feel related through borders, typography, labels, and accent behavior — not by stretching prose across the full viewport.</p></div>
+    </article>
+    <aside class="post-side"><span class="label">Actions</span><a>Raw text for LLM</a><a>All posts</a><a>Edit on GitHub</a></aside>
+  </div>
+</section>
+
+<section class="page-section" id="resume">
+  <div class="inner resume-layout">
+    <aside class="resume-rail"><div class="eyebrow">RESUME</div><h2>Jakub Szwajka</h2><p>Senior Full Stack Engineer. Keep this more document-like than homepage, but let it use a rail + content layout instead of a narrow centered column.</p><a class="button">Download PDF</a></aside>
+    <main class="resume-main">
+      <section class="resume-row"><h3>Summary</h3><div><p>Senior Full Stack Engineer building 0-to-1 products, architecture, backend, frontend, infrastructure, and AI-augmented workflows.</p></div></section>
+      <section class="resume-row"><h3>Experience</h3><div><h4>Sofomo</h4><p>Senior Full Stack Engineer · US clients · architecture and product delivery.</p><ul><li>IoT data platform and architecture consulting.</li><li>Real-time captioning marketplace ownership.</li><li>EdTech and enterprise AI platform work.</li></ul></div></section>
+      <section class="resume-row"><h3>What I bring</h3><div class="trait-grid"><div class="trait"><b>Full-stack ownership</b><p>Backend, frontend, infra, deployment.</p></div><div class="trait"><b>Architecture with context</b><p>Domain boundaries before code shape.</p></div><div class="trait"><b>Remote-native</b><p>Clear async written work.</p></div><div class="trait"><b>AI workflows</b><p>Agent/repo-aware development systems.</p></div></div></section>
+    </main>
+  </div>
+</section>
+
+<footer class="footer"><div class="inner"><span>© 2026 KUBA SZWAJKA</span><span style="color:var(--acid)">POWERED BY AI & CAFFEINE</span></div></footer>
+</div>
+</body>
+</html>

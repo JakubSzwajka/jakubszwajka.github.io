@@ -2,39 +2,8 @@
 import BaseHead from '../components/BaseHead.astro';
 import Footer from '../components/Footer.astro';
 import MainNav from '../components/MainNav.astro';
-import PageHeader from '../components/PageHeader.astro';
 import { SITE_TITLE } from '../consts';
-
-const labArtifacts = [
-	{
-		id: 1,
-		title: 'MyDanceDNA',
-		status: 'Directory platform',
-		description: 'A search surface for dancers to find schools, instructors, and courses by style, location, or price.',
-		link: 'https://www.mydancedna.com',
-		image: '/projects/mydancedna/hero.png',
-		screenshots: [
-			'/projects/mydancedna/hero.png',
-			'/projects/mydancedna/Xnapper-2025-12-28-16.45.33.png',
-			'/projects/mydancedna/Xnapper-2025-12-28-16.45.53.png'
-		],
-		tags: ['PYTHON', 'FASTAPI', 'REACT', 'POSTGRESQL']
-	},
-	{
-		id: 2,
-		title: 'No Noise Letter',
-		status: 'Signal extraction experiment',
-		description: 'Source-aware private briefings: set the topics once, then get a calm newsletter with the useful signal cut out of the feed noise.',
-		link: 'https://nonoiseletter.com',
-		image: '/projects/nonoiseletter/hero.png',
-		screenshots: [
-			'/projects/nonoiseletter/hero.png',
-			'/projects/nonoiseletter/how-it-works.png',
-			'/projects/nonoiseletter/pricing.png'
-		],
-		tags: ['TYPESCRIPT', 'REACT', 'FASTIFY', 'AI']
-	}
-];
+import { labArtifacts } from '../data/labArtifacts';
 ---
 
 <!doctype html>
@@ -46,71 +15,71 @@ const labArtifacts = [
 		/>
 	</head>
 	<body>
-		<MainNav />
+		<div class="lab-page projects-page">
+			<MainNav />
 
-		<div class="wrapper">
-			<main class="content-area">
-				<PageHeader
-					eyebrow="LAB ARTIFACTS"
-					title="Projects"
-					description="Things I shipped, tested, or used as a workbench. Not every artifact is a polished case study; the point is to show traces of building."
-				/>
+			<main class="lab-shell projects-main">
+				<header class="page-head">
+					<p class="lab-eyebrow">Lab artifacts</p>
+					<div>
+						<h1>Projects</h1>
+						<p>
+							Things shipped, tested, or used as a workbench. A little more room here for screenshots,
+							context, and where each artifact stands now.
+						</p>
+					</div>
+				</header>
 
-				{labArtifacts.map((item) => (
-					<article class="project">
-						<div class="project-image-container">
-							{item.screenshots && item.screenshots.length > 0 ? (
-								<div class="carousel" data-carousel={`carousel-${item.id}`}>
-									<div class="carousel-inner">
-										{item.screenshots.map((screenshot, index) => (
-											<img
-												src={screenshot}
-												alt={`${item.title} screenshot ${index + 1}`}
-												class={`carousel-image ${index === 0 ? 'active' : ''}`}
-												loading={index === 0 ? 'eager' : 'lazy'}
-											/>
-										))}
-									</div>
-									{item.screenshots.length > 1 && (
-										<div class="carousel-dots" aria-label={`${item.title} screenshots`}>
-											{item.screenshots.map((_, index) => (
-												<button
-													class={`carousel-dot ${index === 0 ? 'active' : ''}`}
-													data-index={index}
-													aria-label={`View ${item.title} screenshot ${index + 1}`}
-													aria-pressed={index === 0 ? 'true' : 'false'}
-												></button>
-											))}
-										</div>
-									)}
-								</div>
-							) : item.image ? (
-								<img src={item.image} alt={item.title} class="project-image" />
-							) : (
-								<div class="project-image-placeholder">
-									<span>// {item.title}</span>
-								</div>
-							)}
-						</div>
-
-						<div class="project-info">
-							<p class="project-status">{item.status}</p>
+				<section class="project-list" aria-label="Project artifacts">
+					{labArtifacts.map((item, index) => (
+						<article class="project-row">
+							<div class="artifact-meta">
+								<span class="lab-label">artifact / {String(index + 1).padStart(3, '0')}</span>
+								<span>{item.status}</span>
+							</div>
 							<h2>
-								{item.link ? (
-									<a href={item.link} target={item.link.startsWith('http') ? '_blank' : '_self'} rel="noopener noreferrer">{item.title} →</a>
-								) : (
-									item.title
-								)}
+								<a href={item.link} target="_blank" rel="noopener noreferrer">{item.title}</a>
 							</h2>
-							<p>{item.description}</p>
-							<div class="tags" aria-label={`${item.title} stack`}>
+							<p class="project-desc">{item.description}</p>
+							<div class="stack" aria-label={`${item.title} stack`}>
 								{item.tags.map((tag) => (
-									<span class="tag">{tag}</span>
+									<span class="lab-chip">{tag}</span>
 								))}
 							</div>
-						</div>
-					</article>
-				))}
+
+							<div class="screen-strip">
+								{item.screenshots.length > 0 ? (
+									<div class="carousel" data-carousel={`carousel-${item.id}`}>
+										<div class="carousel-inner">
+											{item.screenshots.map((screenshot, screenshotIndex) => (
+												<img
+													src={screenshot}
+													alt={`${item.title} screenshot ${screenshotIndex + 1}`}
+													class={`carousel-image ${screenshotIndex === 0 ? 'active' : ''}`}
+													loading={screenshotIndex === 0 ? 'eager' : 'lazy'}
+												/>
+											))}
+										</div>
+										{item.screenshots.length > 1 && (
+											<div class="carousel-dots" aria-label={`${item.title} screenshots`}>
+												{item.screenshots.map((_, screenshotIndex) => (
+													<button
+														class={`carousel-dot ${screenshotIndex === 0 ? 'active' : ''}`}
+														data-index={screenshotIndex}
+														aria-label={`View ${item.title} screenshot ${screenshotIndex + 1}`}
+														aria-pressed={screenshotIndex === 0 ? 'true' : 'false'}
+													></button>
+												))}
+											</div>
+										)}
+									</div>
+								) : (
+									<div class="screen-placeholder">// {item.title}</div>
+								)}
+							</div>
+						</article>
+					))}
+				</section>
 			</main>
 
 			<Footer />
@@ -142,58 +111,95 @@ const labArtifacts = [
 </html>
 
 <style>
-	.content-area {
-		padding: 2rem;
-		max-width: 900px;
-		margin: 0 auto;
+	.projects-main {
+		padding: 3.5rem 0 5.2rem;
 	}
 
-	.project-status {
-		font-family: 'Space Grotesk', sans-serif;
-		font-size: 0.75rem;
-		font-weight: 700;
-		letter-spacing: 0.14em;
-		text-transform: uppercase;
-		color: var(--text-dim);
-		margin-bottom: 0.5rem;
-	}
-
-	.project {
+	.page-head {
 		display: grid;
-		grid-template-columns: minmax(0, 1.15fr) minmax(260px, 0.85fr);
-		gap: 1.5rem;
-		padding: 1rem;
-		margin-bottom: 1.5rem;
-		border: 1px solid var(--border-color);
-		background: color-mix(in srgb, var(--bg-panel) 38%, transparent);
+		grid-template-columns: 180px minmax(0, 860px);
+		gap: 2rem;
+		align-items: end;
+		margin-bottom: 2.9rem;
 	}
 
-	.project-image-container {
-		position: relative;
-		width: 100%;
-		aspect-ratio: 16 / 10;
-		overflow: hidden;
-		border: 1px solid var(--border-color);
-		background: var(--bg-panel);
+	.page-head h1 {
+		font-size: 5.4rem;
+		line-height: 0.95;
+		letter-spacing: 0;
+		margin: 0;
 	}
 
-	.project-image {
-		width: 100%;
-		height: 100%;
-		object-fit: cover;
-	}
-
-	.project-image-placeholder {
-		width: 100%;
-		height: 100%;
-		background: var(--bg-panel);
-		border: 1px dashed var(--border-color);
-		display: flex;
-		align-items: center;
-		justify-content: center;
-		font-size: 0.85rem;
+	.page-head p:not(.lab-eyebrow) {
 		color: var(--text-dim);
-		font-family: 'JetBrains Mono', monospace;
+		font-size: 0.9rem;
+		line-height: 1.7;
+		margin: 1rem 0 0;
+		max-width: 760px;
+	}
+
+	.project-list {
+		border-top: 1px solid var(--border-color);
+	}
+
+	.project-row {
+		display: grid;
+		grid-template-columns: 150px minmax(260px, 0.75fr) minmax(0, 1fr) 220px;
+		gap: 1.5rem;
+		align-items: start;
+		padding: 1.9rem 0;
+		border-bottom: 1px solid var(--border-color);
+	}
+
+	.artifact-meta {
+		display: grid;
+		gap: 0.35rem;
+		color: var(--text-dim);
+		font-size: 0.7rem;
+		text-transform: uppercase;
+	}
+
+	.project-row h2 {
+		font-size: 3.35rem;
+		line-height: 0.95;
+		letter-spacing: 0;
+		margin: 0;
+	}
+
+	.project-row h2 a {
+		color: var(--text-main);
+		text-decoration: none;
+	}
+
+	.project-row h2 a:hover,
+	.project-row h2 a:focus-visible {
+		color: var(--accent);
+		text-decoration: none;
+	}
+
+	.project-desc {
+		color: var(--text-dim);
+		font-size: 0.82rem;
+		line-height: 1.7;
+		margin: 0;
+		max-width: 620px;
+	}
+
+	.stack {
+		display: flex;
+		flex-wrap: wrap;
+		justify-content: flex-end;
+		gap: 0.4rem;
+	}
+
+	.screen-strip {
+		grid-column: 2 / 5;
+		height: 230px;
+		border: 1px solid var(--border-color);
+		background: color-mix(in srgb, var(--bg-panel) 48%, transparent);
+		margin-top: 0.4rem;
+		overflow: hidden;
+		position: relative;
 	}
 
 	.carousel,
@@ -206,12 +212,13 @@ const labArtifacts = [
 	.carousel-image {
 		width: 100%;
 		height: 100%;
-		object-fit: cover;
+		object-fit: contain;
+		object-position: center;
 		position: absolute;
-		top: 0;
-		left: 0;
+		inset: 0;
 		opacity: 0;
 		transition: opacity 0.25s ease;
+		background: var(--bg-panel);
 	}
 
 	.carousel-image.active {
@@ -227,7 +234,7 @@ const labArtifacts = [
 		display: flex;
 		gap: 0.5rem;
 		padding: 0.4rem;
-		background: color-mix(in srgb, var(--bg-color) 78%, transparent);
+		background: color-mix(in srgb, var(--bg-color) 82%, transparent);
 		border: 1px solid var(--border-color);
 	}
 
@@ -245,56 +252,56 @@ const labArtifacts = [
 		border-color: var(--accent);
 	}
 
-	.project-info {
-		align-self: center;
-	}
-
-	.project-info h2 {
-		font-family: 'Space Grotesk', sans-serif;
-		font-size: 1.35rem;
-		margin-bottom: 0.75rem;
-	}
-
-	.project-info h2 a {
-		color: var(--text-main);
-		text-decoration: none;
-		transition: color 0.15s;
-	}
-
-	.project-info h2 a:hover,
-	.project-info h2 a:focus-visible {
-		color: var(--accent);
-		text-decoration: none;
-	}
-
-	.project-info p:not(.project-status) {
+	.screen-placeholder {
+		display: grid;
+		place-items: center;
+		height: 100%;
 		color: var(--text-dim);
-		font-size: 0.9rem;
-		line-height: 1.7;
-		margin-bottom: 1rem;
+		font-size: 0.8rem;
 	}
 
-	.tags {
-		display: flex;
-		flex-wrap: wrap;
-		gap: 0.5rem;
-	}
-
-	.tag {
-		padding: 0.15rem 0.35rem;
-		border: 1px solid var(--border-color);
-		font-size: 0.68rem;
-		color: var(--text-dim);
-		background: var(--bg-color);
-	}
-
-	@media (max-width: 760px) {
-		.content-area {
-			padding: 1.5rem 1rem;
+	@media (max-width: 1100px) {
+		.page-head,
+		.project-row {
+			grid-template-columns: 1fr;
 		}
 
-		.project {
-			grid-template-columns: 1fr;
+		.page-head h1 {
+			font-size: 4rem;
+		}
+
+		.project-row {
+			gap: 0.75rem;
+		}
+
+		.project-row h2 {
+			font-size: 2.7rem;
+		}
+
+		.stack {
+			justify-content: flex-start;
+		}
+
+		.screen-strip {
+			grid-column: auto;
+		}
+	}
+
+	@media (max-width: 700px) {
+		.projects-main {
+			padding: 3rem 0 4rem;
+		}
+
+		.page-head h1 {
+			font-size: 2.85rem;
+		}
+
+		.project-row h2 {
+			font-size: 2.2rem;
+		}
+
+		.screen-strip {
+			height: 190px;
 		}
 	}
 </style>

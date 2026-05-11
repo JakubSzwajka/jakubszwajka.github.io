@@ -3,6 +3,7 @@ import BaseHead from '../components/BaseHead.astro';
 import Footer from '../components/Footer.astro';
 import MainNav from '../components/MainNav.astro';
 import { SITE_DESCRIPTION, SITE_TITLE, EMAIL } from '../consts';
+import { labArtifacts } from '../data/labArtifacts';
 import { getCollection } from 'astro:content';
 
 const posts = (await getCollection('blog'))
@@ -32,39 +33,71 @@ const years = Object.keys(postsByYear).sort((a, b) => Number(b) - Number(a));
 		<BaseHead title={SITE_TITLE} description={SITE_DESCRIPTION} />
 	</head>
 	<body>
-		<MainNav />
+		<div class="lab-page home-page">
+			<MainNav />
 
-		<div class="wrapper">
-			<!-- HERO SECTION -->
-			<header class="hero">
-				<div class="hero-info">
-					<p class="eyebrow">PUBLIC TECHNICAL LAB</p>
-					<p class="hero-description">
-						Notes, experiments, build logs, and software thoughts from the things I am trying to understand or ship.
-					</p>
-					<p class="hero-description">
-						Expect rough edges, changing opinions, and useful traces from the workbench.
-					</p>
+			<header class="home-hero">
+				<div class="lab-shell home-hero__inner">
+					<div class="hero-copy">
+						<p class="lab-eyebrow">Public Technical Lab</p>
+						<h1>Notes, projects, and traces from software work.</h1>
+						<p>
+							I use this place as an index for things I am trying to understand or ship:
+							architecture notes, AI workflows, product experiments, and build logs.
+						</p>
+					</div>
+					<aside class="site-ledger" aria-label="Site summary">
+						<div class="ledger-row"><span>notes</span><b>{posts.length} public artifacts</b></div>
+						<div class="ledger-row"><span>projects</span><b>{labArtifacts.length} current objects</b></div>
+						<div class="ledger-row"><span>focus</span><b>systems / AI / product</b></div>
+					</aside>
 				</div>
 			</header>
 
-			<!-- BLOG ENTRIES -->
-			<main class="content-area" aria-label="Writing archive">
-				<div class="content-header">
-					<h2>Lab notes</h2>
-					<p>{posts.length} public artifacts, newest first.</p>
-				</div>
-				{years.map((year) => (
-					<section class="year-group">
-						<h3 class="year-label">{year}</h3>
-						{postsByYear[Number(year)].map((post) => (
-							<a href={`/blog/${post.id}/`} class="entry">
-								<span class="entry-date">{formatDate(post.data.pubDate)}</span>
-								<span class="entry-title">{post.data.title}</span>
+			<main class="lab-shell home-main">
+				<section aria-labelledby="projects-title" class="home-section">
+					<div class="section-title">
+						<h2 id="projects-title">Projects</h2>
+						<p>Current objects on the bench. Exposed enough to show direction, not inflated into case-study theater.</p>
+					</div>
+					<div class="artifact-list">
+						{labArtifacts.map((item, index) => (
+							<a class="artifact-row" href={item.link} target="_blank" rel="noopener noreferrer">
+								<span class="artifact-meta">
+									<span class="lab-label">artifact / {String(index + 1).padStart(3, '0')}</span>
+									<span>{item.status}</span>
+								</span>
+								<strong class="artifact-title">{item.title}</strong>
+								<span class="artifact-desc">{item.description}</span>
+								<span class="stack" aria-label={`${item.title} stack`}>
+									{item.tags.map((tag) => (
+										<span class="lab-chip">{tag}</span>
+									))}
+								</span>
 							</a>
 						))}
-					</section>
-				))}
+					</div>
+				</section>
+
+				<section id="archive" class="archive-section" aria-labelledby="archive-title">
+					<div class="section-title">
+						<h2 id="archive-title">Archive</h2>
+						<p>All public notes remain available from this index.</p>
+					</div>
+					<div class="archive-grid">
+						{years.map((year) => (
+							<section class="year-group" aria-labelledby={`archive-${year}`}>
+								<h3 id={`archive-${year}`}>{year}</h3>
+								{postsByYear[Number(year)].map((post) => (
+									<a href={`/blog/${post.id}/`} class="archive-row">
+										<span>{formatDate(post.data.pubDate)}</span>
+										<b>{post.data.title}</b>
+									</a>
+								))}
+							</section>
+						))}
+					</div>
+				</section>
 			</main>
 
 			<Footer />
@@ -73,122 +106,290 @@ const years = Object.keys(postsByYear).sort((a, b) => Number(b) - Number(a));
 </html>
 
 <style>
-	/* --- HERO SECTION --- */
-	.hero {
-		padding: 3rem 2rem;
+	.home-hero {
+		min-height: 46vh;
+		display: grid;
+		align-items: end;
+		border-bottom: 1px solid var(--border-color);
 	}
 
-	@media (min-width: 900px) {
-		.hero {
-			padding: 4rem;
-		}
+	.home-hero__inner {
+		display: grid;
+		grid-template-columns: minmax(0, 820px) minmax(260px, 1fr);
+		gap: 4.5rem;
+		align-items: end;
+		padding: 4.5rem 0 3.25rem;
 	}
 
-	.eyebrow {
-		font-family: 'Space Grotesk', sans-serif;
-		font-size: 0.75rem;
-		font-weight: 700;
-		letter-spacing: 0.14em;
-		text-transform: uppercase;
+	.hero-copy h1 {
+		font-size: 5.1rem;
+		line-height: 0.95;
+		letter-spacing: 0;
+		margin: 1.1rem 0 0;
+		max-width: 920px;
+	}
+
+	.hero-copy p:not(.lab-eyebrow) {
 		color: var(--text-dim);
-		margin-bottom: 0.5rem;
+		font-size: 0.96rem;
+		line-height: 1.75;
+		margin: 1.5rem 0 0;
+		max-width: 720px;
 	}
 
-	.hero-description {
-		max-width: 760px;
-		font-size: 1rem;
-		color: var(--text-dim);
-		margin-bottom: 1rem;
-		line-height: 1.7;
+	.site-ledger {
+		justify-self: end;
+		width: min(100%, 360px);
+		border-left: 1px solid var(--border-color);
+		padding-left: 1.6rem;
 	}
 
-
-	/* --- CONTENT AREA --- */
-	.content-area {
-		padding: 2rem;
-	}
-
-	@media (min-width: 900px) {
-		.content-area {
-			padding: 2rem 4rem;
-		}
-	}
-
-	.content-header {
-		display: flex;
-		justify-content: space-between;
-		align-items: baseline;
+	.ledger-row {
+		display: grid;
+		grid-template-columns: 5.5rem 1fr;
 		gap: 1rem;
-		padding-bottom: 0.75rem;
-		margin-bottom: 1.5rem;
 		border-bottom: 1px solid var(--border-color);
+		padding: 0.72rem 0;
+		font-size: 0.75rem;
 	}
 
-	.content-header h2 {
-		font-size: 1rem;
-		text-transform: uppercase;
-		letter-spacing: 0.12em;
-		margin: 0;
-	}
-
-	.content-header p {
-		font-size: 0.8rem;
+	.ledger-row span {
 		color: var(--text-dim);
+		text-transform: uppercase;
+	}
+
+	.ledger-row b {
+		color: var(--text-main);
+		font-weight: 400;
+	}
+
+	.home-main {
+		padding: 2.6rem 0 5rem;
+	}
+
+	.home-section {
+		margin-bottom: 3.4rem;
+	}
+
+	.section-title {
+		display: grid;
+		grid-template-columns: 180px minmax(0, 1fr);
+		gap: 1.5rem;
+		align-items: baseline;
+		margin-bottom: 1.1rem;
+	}
+
+	.section-title h2,
+	.sidebox h2 {
+		font-size: 0.82rem;
+		letter-spacing: 0;
+		text-transform: uppercase;
 		margin: 0;
 	}
 
-	/* --- BLOG ENTRIES --- */
-	.entry {
-		display: flex;
+	.section-title p,
+	.sidebox p {
+		color: var(--text-dim);
+		font-size: 0.82rem;
+		margin: 0;
+	}
+
+	.artifact-list {
+		border-top: 1px solid var(--border-color);
+	}
+
+	.artifact-row {
+		display: grid;
+		grid-template-columns: 180px minmax(220px, 0.85fr) minmax(0, 1.4fr) auto;
 		gap: 1.5rem;
-		padding: 0.6rem 0;
+		align-items: baseline;
+		padding: 1.5rem 0;
 		border-bottom: 1px solid var(--border-color);
-		text-decoration: none;
 		color: var(--text-main);
+		text-decoration: none;
 		transition: color 0.15s;
 	}
 
-	.entry:hover,
-	.entry:focus-visible {
+	.artifact-row:hover,
+	.artifact-row:focus-visible {
 		color: var(--accent);
 		text-decoration: none;
 	}
 
-	.entry-date {
-		font-size: 0.8rem;
+	.artifact-meta {
+		display: grid;
+		gap: 0.35rem;
 		color: var(--text-dim);
-		flex-shrink: 0;
-		width: 7rem;
+		font-size: 0.7rem;
+		text-transform: uppercase;
 	}
 
-	.entry-title {
-		font-size: 0.95rem;
+	.artifact-title {
+		font-family: 'Space Grotesk', sans-serif;
+		font-size: 2.5rem;
+		line-height: 1;
+		font-weight: 700;
+	}
+
+	.artifact-desc {
+		color: var(--text-dim);
+		font-size: 0.82rem;
+		line-height: 1.65;
+		max-width: 620px;
+	}
+
+	.stack {
+		display: flex;
+		flex-wrap: wrap;
+		justify-content: flex-end;
+		gap: 0.4rem;
+	}
+
+	.sidebox {
+		border-top: 1px solid var(--border-color);
+		margin: 0 0 3.4rem auto;
+		max-width: 320px;
+		padding-top: 1.1rem;
+	}
+
+	.sidebox h2 {
+		margin-bottom: 1rem;
+	}
+
+	.sidebox p {
+		line-height: 1.65;
+		margin-bottom: 1rem;
+	}
+
+	.side-link {
+		display: block;
+		border-bottom: 1px solid var(--border-color);
+		color: var(--text-main);
+		font-size: 0.82rem;
+		padding: 0.66rem 0;
+		text-decoration: none;
+	}
+
+	.side-link:hover,
+	.side-link:focus-visible {
+		color: var(--accent);
+		text-decoration: none;
+	}
+
+	.archive-section {
+		padding-top: 2.4rem;
+	}
+
+	.archive-grid {
+		column-count: 2;
+		column-gap: 4.5rem;
+		column-rule: 1px solid var(--border-color);
 	}
 
 	.year-group {
-		margin-bottom: 2rem;
+		break-inside: avoid;
+		margin-bottom: 2.1rem;
 	}
 
-	.year-label {
-		font-family: 'Space Grotesk', sans-serif;
-		font-size: 0.85rem;
+	.year-group h3 {
 		color: var(--text-dim);
-		margin-bottom: 0.5rem;
+		font-size: 0.82rem;
+		margin: 0 0 0.6rem;
 	}
 
-	@media (max-width: 600px) {
-		.content-header {
-			align-items: flex-start;
-			flex-direction: column;
+	.archive-row {
+		display: grid;
+		grid-template-columns: 6rem minmax(0, 1fr);
+		gap: 1rem;
+		color: var(--text-main);
+		font-size: 0.82rem;
+		padding: 0.5rem 0;
+		text-decoration: none;
+	}
+
+	.archive-row:hover,
+	.archive-row:focus-visible {
+		color: var(--accent);
+		text-decoration: none;
+	}
+
+	.archive-row span {
+		color: var(--text-dim);
+		text-transform: uppercase;
+	}
+
+	.archive-row b {
+		font-weight: 400;
+	}
+
+	@media (max-width: 1100px) {
+		.home-hero__inner {
+			grid-template-columns: 1fr;
+			gap: 2rem;
 		}
 
-		.entry {
-			gap: 0.75rem;
-			flex-direction: column;
+		.hero-copy h1 {
+			font-size: 4rem;
 		}
 
-		.entry-date {
-			width: auto;
+		.site-ledger {
+			justify-self: start;
+			width: 100%;
+			border-left: 0;
+			border-top: 1px solid var(--border-color);
+			padding: 1.1rem 0 0;
+		}
+
+		.artifact-row {
+			grid-template-columns: 1fr;
+			gap: 0.55rem;
+		}
+
+		.stack {
+			justify-content: flex-start;
+		}
+
+		.sidebox {
+			margin-left: 0;
+			max-width: none;
+		}
+	}
+
+	@media (max-width: 720px) {
+		.home-hero__inner {
+			padding: 3.5rem 0 2.6rem;
+		}
+
+		.hero-copy h1 {
+			font-size: 2.75rem;
+		}
+
+		.section-title,
+		.archive-grid {
+			display: block;
+		}
+
+		.archive-grid {
+			column-count: auto;
+			column-gap: 0;
+			column-rule: 0;
+		}
+
+		.section-title p {
+			margin-top: 0.5rem;
+		}
+
+		.artifact-title {
+			font-size: 2rem;
+		}
+
+		.year-group {
+			margin-bottom: 1.8rem;
+		}
+
+		.archive-row {
+			grid-template-columns: 1fr;
+			gap: 0.25rem;
 		}
 	}
 </style>

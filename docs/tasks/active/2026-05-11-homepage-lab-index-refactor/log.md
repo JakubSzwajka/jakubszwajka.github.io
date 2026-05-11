@@ -1,0 +1,9 @@
+# Log
+
+- 2026-05-11 00:22 lucy: Created task folder for homepage lab-index refactor and copied accepted reference mock to `reference-homepage-lab-index.html`.
+- 2026-05-11 00:23 lucy: Drafted PRD and executable task graph. Key constraint: homepage may use wider/full-width lab-index layout, but must not remove older blog access because current `src/pages/index.astro` is the writing archive.
+- 2026-05-11 00:27 lucy: Challenge round 1 returned NO-GO. Main blockers: homepage shell boundary for nav/footer, project data ownership, explicit archive preservation, latest-note count, and verification evidence fallback. Need owner decision before finalizing PRD.
+- 2026-05-11 00:34 lucy: Created `reference-other-pages-shape.html` to test the homepage lab-index shell against matching shapes for projects, a specific blog post, and resume. Purpose: resolve nav/footer/container doctrine before implementation.
+- 2026-05-11 00:39 lucy: User approved the other-pages shape mock. Expanded PRD from homepage-only refactor to lab index shell refactor covering homepage, projects, blog post layout, and resume. Added accepted `reference-other-pages-shape.html` to scope and decomposed matching implementation tasks.
+- 2026-05-11 09:32 codex: Implemented the lab shell migration across homepage, projects, resume, blog post layout, MainNav, Footer, and shared project artifact data. `npm run build` passes. Browser checks at 1440x1000 and 390x844 recorded in `tasks.md`; screenshots saved under `evidence/`. T1-T8 marked done; T9 remains gated on user acceptance.
+- 2026-05-11 10:40 codex: Follow-up cleanup removed implementation/design-meta hero labels. Homepage no longer shows the `tone` ledger row; projects header no longer shows the `shape`/`width` ledger and uses plain user-facing copy. `npm run build` passes; browser checks confirmed no overflow and no visible tone/shape/width labels in affected hero/header areas.

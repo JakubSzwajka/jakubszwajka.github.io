@@ -3,16 +3,24 @@ const today = new Date();
 ---
 
 <footer class="footer-strip">
-	<div>&copy; {today.getFullYear()} KUBA SZWAJKA</div>
-	<div>
-		<i class="ph-fill ph-lightning" style="color: var(--accent)"></i> POWERED BY AI & CAFFEINE
+	<div class="footer-strip__inner">
+		<div>&copy; {today.getFullYear()} KUBA SZWAJKA</div>
+		<div>
+			<i class="ph-fill ph-lightning" style="color: var(--accent)"></i> POWERED BY AI & CAFFEINE
+		</div>
 	</div>
 </footer>
 
 <style>
 	.footer-strip {
 		border-top: 1px solid var(--border-color);
-		padding: 2rem 4rem;
+		padding: 0;
+	}
+
+	.footer-strip__inner {
+		width: min(100% - 3rem, 1360px);
+		margin: 0 auto;
+		padding: 2rem 0;
 		display: flex;
 		justify-content: space-between;
 		align-items: center;
@@ -22,8 +30,9 @@ const today = new Date();
 	}
 
 	@media (max-width: 600px) {
-		.footer-strip {
-			padding: 1.5rem 1rem;
+		.footer-strip__inner {
+			width: min(100% - 2rem, 1360px);
+			padding: 1.5rem 0;
 			flex-direction: column;
 			gap: 0.5rem;
 			text-align: center;

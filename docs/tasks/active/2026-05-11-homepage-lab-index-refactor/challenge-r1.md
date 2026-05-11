@@ -1,0 +1,40 @@
+VERDICT: NO-GO
+
+What works:
+- The core target is real and correctly identified: the current homepage renders `MainNav`, then wraps hero/archive/footer in the global `.wrapper` at `src/pages/index.astro:35-71`, while `.wrapper` is globally capped to 1200px at `src/styles/global.css:47-53`.
+- Existing homepage data flow already uses `getCollection('blog')`, filters drafts, and sorts newest first at `src/pages/index.astro:8-10`, so the latest-notes requirement is low-risk.
+- The current homepage already has a full archive grouped by year at `src/pages/index.astro:19-26` and rendered at `src/pages/index.astro:57-67`; preserving older-post access is mechanically straightforward.
+- Project facts exist for exactly the two requested artifacts: MyDanceDNA at `src/pages/projects.astro:8-22` and No Noise Letter at `src/pages/projects.astro:23-36`, including titles, statuses, descriptions, links, screenshots, and tags.
+- The repo has global tokens and focus states that match the PRD's intent: brand colors/tokens at `src/styles/global.css:5-18`, font/base typography at `src/styles/global.css:37-44` and `src/styles/global.css:56-67`, link focus at `src/styles/global.css:82-86`.
+- The reference mock's desired structure is clear: `.page` + `.inner` 1360px grid surface at `docs/tasks/active/2026-05-11-homepage-lab-index-refactor/reference-homepage-lab-index.html:12`, hero/ledger at `reference-homepage-lab-index.html:22-35`, project artifacts at `reference-homepage-lab-index.html:38-53`, latest notes/side links at `reference-homepage-lab-index.html:56-75`.
+- Build verification is an appropriate collateral target: `package.json:5-8` exposes only dev/build/preview scripts, and `npm run build` completed successfully during this challenge.
+
+Problems found:
+- [P1] Nav/footer container boundary is unresolved and affects whether the reference can be implemented without collateral layout changes. The reference nav is inside a 1360px `.inner` (`reference-homepage-lab-index.html:20-21`), but the real `MainNav` is a full-width component with internal padding and no max-width (`src/components/MainNav.astro:7-37`, `src/components/MainNav.astro:40-57`). Existing pages put `Footer` inside `.wrapper` (`src/pages/index.astro:37-71`, `src/pages/projects.astro:51-117`), but removing `.wrapper` on the homepage makes `Footer` full viewport because its root has only padding (`src/components/Footer.astro:5-16`). This conflicts with the component doctrine that nav stays inside `.wrapper` width to avoid horizontal jumps (`docs/knowledge/design/components.md:21-25`) and with the PRD stop condition to stop if MainNav/Footer/.wrapper changes affect other pages (`prd.md:41-45`).
+- [P2] “Use the same project facts” is not actually possible as stated without either duplicating data or extracting a new shared module. The facts are a local `const labArtifacts` inside `src/pages/projects.astro:8-37` and are consumed directly in that file at `src/pages/projects.astro:59-113`; they are not exported from a reusable data source. `tasks.md:39` permits duplication, but `prd.md:13` and `tasks.md:31` read like shared factual reuse, so the boundary is ambiguous and invites drift.
+- [P2] There is no separate blog archive route to link to. The only blog page route is the dynamic post route `src/pages/blog/[...slug].astro:5-10`, and the current full archive lives on the homepage at `src/pages/index.astro:57-67`. Therefore the reference CTA “Open full archive” at `reference-homepage-lab-index.html:66` cannot safely become `/blog/` unless a new archive route is added, which is not in scope. The PRD correctly says not to remove older-post access (`prd.md:23`), but tasks should explicitly require keeping an on-page full archive or adding an anchor, not a new route.
+- [P2] Verification expects browser screenshots/bounding boxes, but the repo has no declared Playwright/browser tooling dependency in `package.json:11-18`; `tasks.md:64-72` mentions `.playwright-mcp/` or equivalent without defining what equivalent evidence is acceptable. This can block completion bookkeeping even when the implementation is visually correct.
+- [P3] The PRD imports/targets relevant files but misses design docs that already govern this exact area. `README.md:5-7` points to `docs/design-system.md`, and `docs/design-system.md:107-122` documents `.wrapper` as the standard shell. `docs/knowledge/design/principles.md:20-26` and `docs/knowledge/design/components.md:3-9` already contain homepage/lab-artifact doctrine that should be cited as constraints, not only optionally updated after implementation.
+- [P3] Latest-note limit is unspecified. The reference shows five latest notes at `reference-homepage-lab-index.html:59-65`, while `tasks.md:48` only says “limited newest-first list.” This is easy to resolve mechanically, but the acceptance criteria should state the intended count.
+- [P3] Project stack tags in the reference omit some existing facts: MyDanceDNA has `POSTGRESQL` in `src/pages/projects.astro:21`, and No Noise Letter has `REACT` in `src/pages/projects.astro:35`, while the mock shows fewer tags at `reference-homepage-lab-index.html:45-51`. The PRD says use same project facts (`prd.md:13`, `tasks.md:31`), so it should say whether all existing tags are required or the reference's shortened tag set is acceptable.
+
+Missing from PRD:
+- A concrete homepage shell decision: should `MainNav` and `Footer` remain full viewport, be constrained to 1200px, or align to the homepage's new 1360px `.inner` only on `/`?
+- A specific archive preservation pattern for this repo: because no `/blog/` archive exists, require a homepage full-archive section or a same-page `#archive` link.
+- A data ownership decision for `labArtifacts`: duplicate in `index.astro` for now, or extract to a shared `src/data/labArtifacts.ts` and update `projects.astro` to consume it.
+- An explicit latest-note count, likely 5 to match the reference.
+- A verification fallback if no browser automation/MCP is available: e.g. manual viewport screenshots saved in the task folder, or recorded DOM bounding-box numbers in `tasks.md`.
+- A note that parent scoped Astro CSS will not automatically style internals of `MainNav`/`Footer`; homepage-only nav/footer tweaks would need component props, global selectors, or component changes.
+
+Suggested changes:
+- Edit `prd.md` Scope/Acceptance to say: “On this repo, there is no `/blog/` archive route; keep older posts accessible by preserving a full archive below latest notes or linking to an on-page `#archive` section. Do not add a new archive route unless explicitly approved.”
+- Edit `prd.md` Stop Conditions to replace the current MainNav/Footer ambiguity with a decision: either “Keep existing MainNav/Footer visual width unchanged on homepage” or “Apply a homepage-only 1360px alignment for nav/footer; do not affect other routes.”
+- Edit `tasks.md` T1/T4 to include nav/footer bounding boxes explicitly: viewport, nav content, homepage inner, footer content.
+- Edit `tasks.md` T2 to choose one data strategy: “duplicate the two project records in `index.astro` and compare against `projects.astro` during review” or “extract `labArtifacts` to `src/data/labArtifacts.ts` and update both pages.”
+- Edit `tasks.md` T3 acceptance to state “render 5 latest non-draft notes” and “render/archive all remaining non-draft posts below or behind `#archive`.”
+- Edit `prd.md` Relevant files to add `docs/design-system.md`, `docs/knowledge/design/principles.md`, and `docs/knowledge/design/components.md` as constraints.
+- Edit `tasks.md` T4 verification to define acceptable evidence if Playwright MCP is unavailable.
+
+Design holes needing grill-me:
+- Should homepage nav/footer align to the new 1360px lab-index container, stay as the current full-width `MainNav` plus wrapper-dependent `Footer`, or stay within the old 1200px app silo while only main content goes wider?
+- Should project facts be deliberately duplicated for this small homepage refactor, or should this refactor extract shared project data despite “no new project data sources/CMS” being out of scope?

@@ -41,7 +41,7 @@ Defined as CSS custom properties on `:root` in `src/styles/global.css`.
 | `--text-dim` | `#999999` | Secondary/meta text |
 | `--accent` | `#ccff00` | Links, brand, highlights, focus, active states |
 | `--border-color` | `#333333` | Structural borders and dividers |
-| `--grid-line` | `rgba(255, 255, 255, 0.05)` | Subtle grid pattern / brand imagery |
+| `--grid-line` | `rgba(255, 255, 255, 0.03)` | Subtle grid pattern / brand imagery |
 
 ### Accent colour
 
