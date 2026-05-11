@@ -194,20 +194,19 @@ const years = Object.keys(postsByYear).sort((a, b) => Number(b) - Number(a));
 		margin: 0;
 	}
 
-	.artifact-list {
-		border-top: 1px solid var(--border-color);
-	}
-
 	.artifact-row {
 		display: grid;
 		grid-template-columns: 180px minmax(220px, 0.85fr) minmax(0, 1.4fr) auto;
 		gap: 1.5rem;
-		align-items: baseline;
+		align-items: start;
 		padding: 1.5rem 0;
-		border-bottom: 1px solid var(--border-color);
 		color: var(--text-main);
 		text-decoration: none;
 		transition: color 0.15s;
+	}
+
+	.artifact-row + .artifact-row {
+		border-top: 1px solid var(--border-color);
 	}
 
 	.artifact-row:hover,
