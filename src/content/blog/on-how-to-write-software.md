@@ -4,6 +4,7 @@ description: 'A working agreement for writing software with clear module boundar
 pubDate: 'April 27, 2026'
 tags: ['Software Design', 'AI', 'Architecture']
 draft: false
+aiSlop: true
 ---
 
 I wrote this originally as an internal architecture agreement for one of my projects. The more I use coding agents, the more useful this kind of document becomes: not as a grand theory of software, but as a shared contract for how humans and agents should shape code together. It gives the agent a vocabulary, boundaries, and defaults before it starts editing files.

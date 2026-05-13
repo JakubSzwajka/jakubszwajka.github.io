@@ -92,6 +92,7 @@ const years = Object.keys(postsByYear).sort((a, b) => Number(b) - Number(a));
 									<a href={`/blog/${post.id}/`} class="archive-row">
 										<span>{formatDate(post.data.pubDate)}</span>
 										<b>{post.data.title}</b>
+										{post.data.aiSlop && <span class="ai-slop-badge">AI SLOP</span>}
 									</a>
 								))}
 							</section>
@@ -298,12 +299,27 @@ const years = Object.keys(postsByYear).sort((a, b) => Number(b) - Number(a));
 
 	.archive-row {
 		display: grid;
-		grid-template-columns: 6rem minmax(0, 1fr);
+		grid-template-columns: 6rem minmax(0, 1fr) auto;
 		gap: 1rem;
+		align-items: baseline;
 		color: var(--text-main);
 		font-size: 0.82rem;
 		padding: 0.5rem 0;
 		text-decoration: none;
+	}
+
+	.ai-slop-badge {
+		font-family: 'Space Grotesk', sans-serif;
+		font-size: 0.62rem;
+		font-weight: 700;
+		letter-spacing: 0.04em;
+		text-transform: uppercase;
+		color: var(--accent);
+		border: 1px solid var(--accent);
+		background: transparent;
+		padding: 0.18rem 0.4rem;
+		line-height: 1;
+		white-space: nowrap;
 	}
 
 	.archive-row:hover,
