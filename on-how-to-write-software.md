@@ -259,6 +259,25 @@ modules/<name>/index.ts
 
 They do not import from another module’s `internal/` folder.
 
+### File size
+
+Keep files under 300 lines.
+
+A file longer than 300 lines is a signal — usually that the file is doing too
+many things, or that an internal concept inside it deserves its own named home.
+When a file approaches the limit, prefer extracting:
+
+- a smaller internal helper file under `internal/`;
+- a separate use case or process;
+- a sibling file covering one cohesive concern.
+
+The limit is a heuristic, not a hard cap. Some files (schema barrels, generated
+code, large adapter surfaces) may have a deliberate reason to exceed it.
+Exceeding 300 lines should be a deliberate choice, not drift.
+
+Enforce with a linter rule (e.g. ESLint `max-lines`) where possible, so the
+limit shows up at review time rather than during a much later refactor.
+
 ---
 
 ## 5. Public module contract
