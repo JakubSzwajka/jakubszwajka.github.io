@@ -1,5 +1,15 @@
 # Repo Agent Notes
 
+## Content pipeline boundary
+
+This repo is the public Astro blog and portfolio, not the private writing pipeline.
+
+- Private evidence, harvest logs, source pointers, fragments, source-safety reviews, and unpublished shaping work belong in `/Users/kuba.szwajka/DEV/priv/career`.
+- Blog candidates should be shaped in `/Users/kuba.szwajka/DEV/priv/career/docs/artifacts/blog-candidates/<slug>/`.
+- Export into this repo only after source-safety review, normally to `src/content/blog/<slug>.md`.
+- Do not add local private repo paths, customer context, raw harvest logs, or private source pointers to this repo.
+- Existing `docs/` writing-pipeline files are legacy/migration artifacts unless Kuba explicitly asks to use them.
+
 ## Visual/layout fixes
 
 When changing layout, especially blog post chrome, verify the actual rendered boxes in the browser before claiming the fix is done. Check the relevant container and child element bounding boxes separately: page wrapper, section/silo, text/content children, and any side chrome such as the table of contents.
