@@ -106,3 +106,15 @@ const { title, description, ogImage } = Astro.props;
     data-website-id="e8119e14-bc31-4edd-a61b-0c1864fe5438"
   />
 )}
+
+<!-- Plausible Analytics -->
+{import.meta.env.PROD && (
+  <>
+    <script async src="https://plausible.app.kubaszwajka.com/js/pa-JdKjPX8bWZvD1MBLKFgv_.js"></script>
+    <script is:inline>
+      window.plausible = window.plausible || function(){(plausible.q = plausible.q || []).push(arguments)};
+      plausible.init = plausible.init || function(i){plausible.o = i || {}};
+      plausible.init();
+    </script>
+  </>
+)}
