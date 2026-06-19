@@ -61,10 +61,35 @@ function formatDate(date: Date): string {
 								{updatedDate && <span class="updated">Updated {formatDate(updatedDate)}</span>}
 							</div>
 						)}
-						<div class="post-actions-inline" aria-label="Post actions">
-							<a href={`/blog/${id}.txt`} target="_blank" rel="noopener noreferrer">Raw text for LLM</a>
-							<a href="/">All posts</a>
-							<a href={`https://github.com/JakubSzwajka/JakubSzwajka.github.io/edit/main/src/content/blog/${id}.md`} target="_blank" rel="noopener noreferrer">Edit on GitHub</a>
+						<div class="post-actions-inline" aria-label="Post actions" data-analytics-area="post_header_actions">
+							<a
+								href={`/blog/${id}.txt`}
+								target="_blank"
+								rel="noopener noreferrer"
+								data-analytics-event="article_action_click"
+								data-analytics-action="raw_text"
+								data-analytics-post={id}
+							>
+								Raw text for LLM
+							</a>
+							<a
+								href="/"
+								data-analytics-event="article_action_click"
+								data-analytics-action="all_posts"
+								data-analytics-post={id}
+							>
+								All posts
+							</a>
+							<a
+								href={`https://github.com/JakubSzwajka/JakubSzwajka.github.io/edit/main/src/content/blog/${id}.md`}
+								target="_blank"
+								rel="noopener noreferrer"
+								data-analytics-event="article_action_click"
+								data-analytics-action="edit_github"
+								data-analytics-post={id}
+							>
+								Edit on GitHub
+							</a>
 						</div>
 					</header>
 
@@ -73,18 +98,61 @@ function formatDate(date: Date): string {
 					</div>
 				</article>
 
-				<aside class="post-side" aria-label="Post actions">
+				<aside class="post-side" aria-label="Post actions" data-analytics-area="post_side_actions">
 					<span class="lab-label">Actions</span>
-					<a href={`/blog/${id}.txt`} target="_blank" rel="noopener noreferrer">Raw text for LLM</a>
-					<a href="/">All posts</a>
-					<a href={`https://github.com/JakubSzwajka/JakubSzwajka.github.io/edit/main/src/content/blog/${id}.md`} target="_blank" rel="noopener noreferrer">Edit on GitHub</a>
+					<a
+						href={`/blog/${id}.txt`}
+						target="_blank"
+						rel="noopener noreferrer"
+						data-analytics-event="article_action_click"
+						data-analytics-action="raw_text"
+						data-analytics-post={id}
+					>
+						Raw text for LLM
+					</a>
+					<a
+						href="/"
+						data-analytics-event="article_action_click"
+						data-analytics-action="all_posts"
+						data-analytics-post={id}
+					>
+						All posts
+					</a>
+					<a
+						href={`https://github.com/JakubSzwajka/JakubSzwajka.github.io/edit/main/src/content/blog/${id}.md`}
+						target="_blank"
+						rel="noopener noreferrer"
+						data-analytics-event="article_action_click"
+						data-analytics-action="edit_github"
+						data-analytics-post={id}
+					>
+						Edit on GitHub
+					</a>
 				</aside>
 			</main>
 
 			<footer class="post-footer-bar">
-				<div class="post-footer-inner">
-					<a href="/" class="btn-arrow">&lt;- All Posts</a>
-					<a href={`https://github.com/JakubSzwajka/JakubSzwajka.github.io/edit/main/src/content/blog/${id}.md`} class="btn-arrow" target="_blank" rel="noopener noreferrer">Edit on GitHub -&gt;</a>
+				<div class="post-footer-inner" data-analytics-area="post_footer_actions">
+					<a
+						href="/"
+						class="btn-arrow"
+						data-analytics-event="article_action_click"
+						data-analytics-action="all_posts"
+						data-analytics-post={id}
+					>
+						&lt;- All Posts
+					</a>
+					<a
+						href={`https://github.com/JakubSzwajka/JakubSzwajka.github.io/edit/main/src/content/blog/${id}.md`}
+						class="btn-arrow"
+						target="_blank"
+						rel="noopener noreferrer"
+						data-analytics-event="article_action_click"
+						data-analytics-action="edit_github"
+						data-analytics-post={id}
+					>
+						Edit on GitHub -&gt;
+					</a>
 				</div>
 			</footer>
 

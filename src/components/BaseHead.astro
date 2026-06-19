@@ -107,6 +107,120 @@ const { title, description, ogImage } = Astro.props;
   />
 )}
 
+<script is:inline>
+(() => {
+  const MAX_VALUE_LENGTH = 80;
+  const ANALYTICS_PREFIX = 'analytics';
+  const IGNORED_DATA_KEYS = new Set(['analyticsArea', 'analyticsEvent', 'analyticsTracked']);
+
+  const cleanValue = (value) => {
+    if (!value) return undefined;
+    const cleaned = String(value).replace(/\s+/g, ' ').trim();
+    return cleaned ? cleaned.slice(0, MAX_VALUE_LENGTH) : undefined;
+  };
+
+  const camelToSnake = (value) => value.replace(/[A-Z]/g, (letter) => `_${letter.toLowerCase()}`);
+
+  const getDatasetProps = (link) => Object.entries(link.dataset).reduce((props, [key, value]) => {
+    if (!key.startsWith(ANALYTICS_PREFIX) || IGNORED_DATA_KEYS.has(key)) return props;
+
+    const propName = camelToSnake(
+      key.replace(ANALYTICS_PREFIX, '').replace(/^./, (letter) => letter.toLowerCase())
+    );
+    const propValue = cleanValue(value);
+    if (propName && propValue) props[propName] = propValue;
+
+    return props;
+  }, {});
+
+  const inferArea = (link) => {
+    const explicitArea = link.getAttribute('data-analytics-area') ||
+      link.closest('[data-analytics-area]')?.getAttribute('data-analytics-area');
+
+    if (explicitArea) return explicitArea;
+    if (link.closest('.main-nav')) return 'main_nav';
+    if (link.closest('.resume-links')) return 'resume_links';
+    if (link.closest('.artifact-list')) return 'projects';
+    if (link.closest('.post-actions-inline')) return 'post_header_actions';
+    if (link.closest('.post-side')) return 'post_side_actions';
+    if (link.closest('.post-footer-bar')) return 'post_footer_actions';
+    if (link.closest('.prose')) return 'article_body';
+
+    return 'page';
+  };
+
+  const getLinkLabel = (link) => cleanValue(
+    link.getAttribute('data-analytics-label') ||
+    link.getAttribute('aria-label') ||
+    link.textContent
+  );
+
+  const getUrl = (href) => {
+    try {
+      return new URL(href, window.location.href);
+    } catch {
+      return null;
+    }
+  };
+
+  const getDestinationProps = (url) => {
+    if (!url) return {};
+
+    if (url.protocol === 'mailto:') {
+      return { contact_type: 'email' };
+    }
+
+    if (!['http:', 'https:'].includes(url.protocol)) return {};
+
+    return {
+      destination_host: cleanValue(url.hostname.replace(/^www\./, '')),
+      destination_path: cleanValue(url.pathname),
+    };
+  };
+
+  const getEvent = (link) => {
+    const explicitEvent = link.getAttribute('data-analytics-event');
+    if (explicitEvent) return cleanValue(explicitEvent);
+
+    const url = getUrl(link.getAttribute('href'));
+    if (!url || url.origin === window.location.origin) return null;
+
+    if (url.protocol === 'mailto:') return 'contact_click';
+    if (['http:', 'https:'].includes(url.protocol)) return 'outbound_link_click';
+
+    return null;
+  };
+
+  const track = (eventName, props) => {
+    if (!eventName || !window.umami || typeof window.umami.track !== 'function') return;
+
+    window.umami.track(eventName, {
+      ...props,
+      page_path: cleanValue(window.location.pathname),
+    });
+  };
+
+  document.addEventListener('click', (event) => {
+    const target = event.target instanceof Element ? event.target : null;
+    const link = target?.closest('a[href]');
+
+    if (!link || link.getAttribute('data-analytics-tracked') === 'false') return;
+
+    const eventName = getEvent(link);
+    if (!eventName) return;
+
+    const url = getUrl(link.getAttribute('href'));
+
+    track(eventName, {
+      ...getDestinationProps(url),
+      ...getDatasetProps(link),
+      link_area: cleanValue(inferArea(link)),
+      link_label: getLinkLabel(link),
+    });
+  }, { capture: true });
+})();
+</script>
+
 <!-- Plausible Analytics -->
 {import.meta.env.PROD && (
   <>

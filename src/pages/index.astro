@@ -62,7 +62,15 @@ const years = Object.keys(postsByYear).sort((a, b) => Number(b) - Number(a));
 					</div>
 					<div class="artifact-list">
 						{labArtifacts.map((item, index) => (
-							<a class="artifact-row" href={item.link} target="_blank" rel="noopener noreferrer">
+							<a
+								class="artifact-row"
+								href={item.link}
+								target="_blank"
+								rel="noopener noreferrer"
+								data-analytics-event="project_click"
+								data-analytics-project-id={String(item.id)}
+								data-analytics-project-title={item.title}
+							>
 								<span class="artifact-meta">
 									<span class="lab-label">artifact / {String(index + 1).padStart(3, '0')}</span>
 									<span>{item.status}</span>

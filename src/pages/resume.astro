@@ -25,12 +25,48 @@ import { SITE_TITLE, GITHUB_URL, LINKEDIN_URL, TWITTER_URL, EMAIL } from '../con
 						<p class="subtitle">Senior Full Stack Engineer</p>
 						<p class="location">Wrocław, Poland · Remote (EU/US timezones)</p>
 						<div class="resume-links">
-							<a href={GITHUB_URL} target="_blank" rel="noopener noreferrer"><i class="ph-bold ph-github-logo"></i> GitHub</a>
-							<a href={LINKEDIN_URL} target="_blank" rel="noopener noreferrer"><i class="ph-bold ph-linkedin-logo"></i> LinkedIn</a>
-							<a href={TWITTER_URL} target="_blank" rel="noopener noreferrer"><i class="ph-bold ph-x-logo"></i> X</a>
-							<a href={`mailto:${EMAIL}`}><i class="ph-bold ph-envelope-simple"></i> Email</a>
+							<a
+								href={GITHUB_URL}
+								target="_blank"
+								rel="noopener noreferrer"
+								data-analytics-event="social_click"
+								data-analytics-network="github"
+							>
+								<i class="ph-bold ph-github-logo"></i> GitHub
+							</a>
+							<a
+								href={LINKEDIN_URL}
+								target="_blank"
+								rel="noopener noreferrer"
+								data-analytics-event="social_click"
+								data-analytics-network="linkedin"
+							>
+								<i class="ph-bold ph-linkedin-logo"></i> LinkedIn
+							</a>
+							<a
+								href={TWITTER_URL}
+								target="_blank"
+								rel="noopener noreferrer"
+								data-analytics-event="social_click"
+								data-analytics-network="x"
+							>
+								<i class="ph-bold ph-x-logo"></i> X
+							</a>
+							<a
+								href={`mailto:${EMAIL}`}
+								data-analytics-event="contact_click"
+								data-analytics-contact-method="email"
+							>
+								<i class="ph-bold ph-envelope-simple"></i> Email
+							</a>
 						</div>
-						<a href="/cv.pdf" download class="lab-button download-btn">
+						<a
+							href="/cv.pdf"
+							download
+							class="lab-button download-btn"
+							data-analytics-event="download_click"
+							data-analytics-download="resume_pdf"
+						>
 							<i class="ph-bold ph-file-pdf"></i> Download PDF
 						</a>
 					</aside>

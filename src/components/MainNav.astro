@@ -18,16 +18,46 @@ const currentPath = normalizePath(Astro.url.pathname);
 			</div>
 			<span class="nav-divider">|</span>
 			<div class="nav-socials">
-				<a href={GITHUB_URL} class="nav-social" target="_blank" rel="noopener noreferrer" aria-label="GitHub">
+				<a
+					href={GITHUB_URL}
+					class="nav-social"
+					target="_blank"
+					rel="noopener noreferrer"
+					aria-label="GitHub"
+					data-analytics-event="social_click"
+					data-analytics-network="github"
+				>
 					<i class="ph-bold ph-github-logo"></i>
 				</a>
-				<a href={LINKEDIN_URL} class="nav-social" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn">
+				<a
+					href={LINKEDIN_URL}
+					class="nav-social"
+					target="_blank"
+					rel="noopener noreferrer"
+					aria-label="LinkedIn"
+					data-analytics-event="social_click"
+					data-analytics-network="linkedin"
+				>
 					<i class="ph-bold ph-linkedin-logo"></i>
 				</a>
-				<a href={TWITTER_URL} class="nav-social" target="_blank" rel="noopener noreferrer" aria-label="X">
+				<a
+					href={TWITTER_URL}
+					class="nav-social"
+					target="_blank"
+					rel="noopener noreferrer"
+					aria-label="X"
+					data-analytics-event="social_click"
+					data-analytics-network="x"
+				>
 					<i class="ph-bold ph-x-logo"></i>
 				</a>
-				<a href={`mailto:${EMAIL}`} class="nav-social" aria-label="Email">
+				<a
+					href={`mailto:${EMAIL}`}
+					class="nav-social"
+					aria-label="Email"
+					data-analytics-event="contact_click"
+					data-analytics-contact-method="email"
+				>
 					<i class="ph-bold ph-envelope-simple"></i>
 				</a>
 			</div>

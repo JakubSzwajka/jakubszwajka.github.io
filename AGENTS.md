@@ -9,6 +9,7 @@ This repo is the public Astro blog and portfolio, not the private writing pipeli
 - Export into this repo only after source-safety review, normally to `src/content/blog/<slug>.md`.
 - Do not add local private repo paths, customer context, raw harvest logs, or private source pointers to this repo.
 - Existing `docs/` writing-pipeline files are legacy/migration artifacts unless Kuba explicitly asks to use them.
+- When planning future blog candidates, treat precise implementation-trap posts as the current strongest public signal: Python/FastAPI/Pydantic-style posts that solve specific integration problems. Keep planning and source review in `/Users/kuba.szwajka/DEV/priv/career`; export only after source-safety review.
 
 ## Visual/layout fixes
 
