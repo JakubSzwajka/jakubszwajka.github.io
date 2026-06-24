@@ -40,6 +40,9 @@ Defined as CSS custom properties on `:root` in `src/styles/global.css`.
 | `--text-main` | `#e0e0e0` | Primary readable text |
 | `--text-dim` | `#999999` | Secondary/meta text |
 | `--accent` | `#ccff00` | Links, brand, highlights, focus, active states |
+| `--paper` | `#dcd8cc` | Tactile label surfaces and warmer brand accents |
+| `--paper-muted` | `#8e897c` | Secondary text on label-influenced surfaces |
+| `--graphite` | `#1b1b1b` | Warmer charcoal blocks and label backgrounds |
 | `--border-color` | `#333333` | Structural borders and dividers |
 | `--grid-line` | `rgba(255, 255, 255, 0.03)` | Subtle grid pattern / brand imagery |
 

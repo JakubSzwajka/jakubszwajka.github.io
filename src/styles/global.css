@@ -12,6 +12,9 @@
 
 	/* ACID GREEN ACCENT - High Contrast */
 	--accent: #ccff00;
+	--paper: #dcd8cc;
+	--paper-muted: #8e897c;
+	--graphite: #1b1b1b;
 
 	--border-color: #333333;
 	--grid-line: rgba(255, 255, 255, 0.03);
@@ -86,9 +89,9 @@ body {
 .lab-chip {
 	display: inline-flex;
 	align-items: center;
-	border: 1px solid var(--border-color);
-	background: color-mix(in srgb, var(--bg-color) 82%, transparent);
-	color: var(--text-dim);
+	border: 1px solid color-mix(in srgb, var(--paper) 22%, var(--border-color));
+	background: color-mix(in srgb, var(--graphite) 78%, transparent);
+	color: color-mix(in srgb, var(--paper) 70%, var(--text-dim));
 	font-size: 0.64rem;
 	line-height: 1;
 	padding: 0.25rem 0.4rem;

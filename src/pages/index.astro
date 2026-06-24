@@ -39,18 +39,19 @@ const years = Object.keys(postsByYear).sort((a, b) => Number(b) - Number(a));
 			<header class="home-hero">
 				<div class="lab-shell home-hero__inner">
 					<div class="hero-copy">
-						<p class="lab-eyebrow">Public Technical Lab</p>
-						<h1>Notes, projects, and traces from software work.</h1>
+						<p class="lab-eyebrow">Builder / founder notebook</p>
+						<h1>Notes, projects, and traces from <span>software work.</span></h1>
 						<p>
 							I use this place as an index for things I am trying to understand or ship:
 							architecture notes, AI workflows, product experiments, and build logs.
 						</p>
 					</div>
-					<aside class="site-ledger" aria-label="Site summary">
-						<div class="ledger-row"><span>notes</span><b>{posts.length} public artifacts</b></div>
-						<div class="ledger-row"><span>projects</span><b>{labArtifacts.length} current objects</b></div>
-						<div class="ledger-row"><span>focus</span><b>systems / AI / product</b></div>
-					</aside>
+				</div>
+				<div class="hero-strip lab-shell" aria-hidden="true">
+					<span>builder</span>
+					<span>founder</span>
+					<span>systems</span>
+					<span>agents</span>
 				</div>
 			</header>
 
@@ -116,26 +117,47 @@ const years = Object.keys(postsByYear).sort((a, b) => Number(b) - Number(a));
 
 <style>
 	.home-hero {
-		min-height: 46vh;
+		position: relative;
+		min-height: 64vh;
 		display: grid;
 		align-items: end;
 		border-bottom: 1px solid var(--border-color);
+		overflow: hidden;
+	}
+
+	.home-hero::after {
+		content: '';
+		position: absolute;
+		left: 0;
+		right: 0;
+		bottom: 0;
+		height: 12rem;
+		background: linear-gradient(180deg, rgba(13, 13, 13, 0), var(--bg-color));
+		pointer-events: none;
 	}
 
 	.home-hero__inner {
-		display: grid;
-		grid-template-columns: minmax(0, 820px) minmax(260px, 1fr);
-		gap: 4.5rem;
-		align-items: end;
-		padding: 4.5rem 0 3.25rem;
+		position: relative;
+		z-index: 1;
+		display: block;
+		padding: 6.5rem 0 4.2rem;
 	}
 
 	.hero-copy h1 {
-		font-size: 5.1rem;
+		font-size: clamp(4.9rem, 7.1vw, 6rem);
 		line-height: 0.95;
 		letter-spacing: 0;
 		margin: 1.1rem 0 0;
-		max-width: 920px;
+		max-width: 980px;
+		text-wrap: balance;
+	}
+
+	.hero-copy h1 span {
+		display: inline-block;
+		background: var(--paper);
+		color: var(--bg-color);
+		padding: 0 0.18em 0.08em;
+		clip-path: polygon(0 8%, 94% 8%, 100% 45%, 94% 100%, 0 100%);
 	}
 
 	.hero-copy p:not(.lab-eyebrow) {
@@ -146,34 +168,35 @@ const years = Object.keys(postsByYear).sort((a, b) => Number(b) - Number(a));
 		max-width: 720px;
 	}
 
-	.site-ledger {
-		justify-self: end;
-		width: min(100%, 360px);
-		border-left: 1px solid var(--border-color);
-		padding-left: 1.6rem;
-	}
-
-	.ledger-row {
+	.hero-strip {
+		position: relative;
+		z-index: 1;
 		display: grid;
-		grid-template-columns: 5.5rem 1fr;
-		gap: 1rem;
-		border-bottom: 1px solid var(--border-color);
-		padding: 0.72rem 0;
-		font-size: 0.75rem;
+		grid-template-columns: repeat(4, minmax(0, 1fr));
+		border-top: 1px solid color-mix(in srgb, var(--paper) 18%, var(--border-color));
+		background: color-mix(in srgb, var(--graphite) 56%, transparent);
 	}
 
-	.ledger-row span {
-		color: var(--text-dim);
+	.hero-strip span {
+		min-height: 3.25rem;
+		display: flex;
+		align-items: center;
+		border-right: 1px solid color-mix(in srgb, var(--paper) 18%, var(--border-color));
+		color: var(--paper-muted);
+		font-size: 0.72rem;
 		text-transform: uppercase;
+		padding: 0 1rem;
 	}
 
-	.ledger-row b {
-		color: var(--text-main);
-		font-weight: 400;
+	.hero-strip span:first-child {
+		color: var(--bg-color);
+		background: var(--paper);
+		font-family: 'Space Grotesk', sans-serif;
+		font-weight: 700;
 	}
 
 	.home-main {
-		padding: 2.6rem 0 5rem;
+		padding: 3.2rem 0 5rem;
 	}
 
 	.home-section {
@@ -196,6 +219,14 @@ const years = Object.keys(postsByYear).sort((a, b) => Number(b) - Number(a));
 		margin: 0;
 	}
 
+	.section-title h2 {
+		width: max-content;
+		background: var(--paper);
+		color: var(--bg-color);
+		padding: 0.26rem 0.46rem;
+		clip-path: polygon(0 0, calc(100% - 0.45rem) 0, 100% 50%, calc(100% - 0.45rem) 100%, 0 100%);
+	}
+
 	.section-title p,
 	.sidebox p {
 		color: var(--text-dim);
@@ -204,30 +235,56 @@ const years = Object.keys(postsByYear).sort((a, b) => Number(b) - Number(a));
 	}
 
 	.artifact-row {
+		position: relative;
 		display: grid;
 		grid-template-columns: 180px minmax(220px, 0.85fr) minmax(0, 1.4fr) auto;
 		gap: 1.5rem;
 		align-items: start;
-		padding: 1.5rem 0;
+		padding: 1.35rem 1rem;
 		color: var(--text-main);
 		text-decoration: none;
-		transition: color 0.15s;
+		border: 1px solid color-mix(in srgb, var(--paper) 12%, var(--border-color));
+		background: color-mix(in srgb, var(--bg-color) 86%, var(--graphite));
+		transition:
+			background-color 0.15s,
+			border-color 0.15s,
+			color 0.15s;
+	}
+
+	.artifact-row::before {
+		content: '';
+		position: absolute;
+		top: 1.25rem;
+		left: -1px;
+		width: 2.8rem;
+		height: 0.42rem;
+		background: var(--paper);
+		opacity: 0;
+		clip-path: polygon(0 0, 85% 0, 100% 50%, 85% 100%, 0 100%);
+		transition: opacity 0.15s;
 	}
 
 	.artifact-row + .artifact-row {
-		border-top: 1px solid var(--border-color);
+		margin-top: 0.72rem;
 	}
 
 	.artifact-row:hover,
 	.artifact-row:focus-visible {
+		background: color-mix(in srgb, var(--graphite) 58%, transparent);
+		border-color: color-mix(in srgb, var(--paper) 26%, var(--border-color));
 		color: var(--accent);
 		text-decoration: none;
+	}
+
+	.artifact-row:hover::before,
+	.artifact-row:focus-visible::before {
+		opacity: 0.9;
 	}
 
 	.artifact-meta {
 		display: grid;
 		gap: 0.35rem;
-		color: var(--text-dim);
+		color: var(--paper-muted);
 		font-size: 0.7rem;
 		text-transform: uppercase;
 	}
@@ -251,6 +308,24 @@ const years = Object.keys(postsByYear).sort((a, b) => Number(b) - Number(a));
 		flex-wrap: wrap;
 		justify-content: flex-end;
 		gap: 0.4rem;
+	}
+
+	.archive-section {
+		position: relative;
+		margin-top: 4rem;
+		padding-top: 3rem;
+	}
+
+	.archive-section::before {
+		content: '';
+		position: absolute;
+		top: 0;
+		right: 0;
+		width: min(38vw, 420px);
+		height: 0.72rem;
+		background: var(--paper);
+		clip-path: polygon(0 0, 100% 0, 96% 100%, 0 100%);
+		opacity: 0.92;
 	}
 
 	.sidebox {
@@ -282,10 +357,6 @@ const years = Object.keys(postsByYear).sort((a, b) => Number(b) - Number(a));
 	.side-link:focus-visible {
 		color: var(--accent);
 		text-decoration: none;
-	}
-
-	.archive-section {
-		padding-top: 2.4rem;
 	}
 
 	.archive-grid {
@@ -347,20 +418,11 @@ const years = Object.keys(postsByYear).sort((a, b) => Number(b) - Number(a));
 
 	@media (max-width: 1100px) {
 		.home-hero__inner {
-			grid-template-columns: 1fr;
-			gap: 2rem;
+			padding-top: 4.8rem;
 		}
 
 		.hero-copy h1 {
 			font-size: 4rem;
-		}
-
-		.site-ledger {
-			justify-self: start;
-			width: 100%;
-			border-left: 0;
-			border-top: 1px solid var(--border-color);
-			padding: 1.1rem 0 0;
 		}
 
 		.artifact-row {
@@ -380,11 +442,19 @@ const years = Object.keys(postsByYear).sort((a, b) => Number(b) - Number(a));
 
 	@media (max-width: 720px) {
 		.home-hero__inner {
-			padding: 3.5rem 0 2.6rem;
+			padding: 3.5rem 0 2.1rem;
 		}
 
 		.hero-copy h1 {
 			font-size: 2.75rem;
+		}
+
+		.hero-copy h1 span {
+			padding-inline: 0.12em;
+		}
+
+		.hero-strip {
+			grid-template-columns: repeat(2, minmax(0, 1fr));
 		}
 
 		.section-title,
@@ -404,6 +474,10 @@ const years = Object.keys(postsByYear).sort((a, b) => Number(b) - Number(a));
 
 		.artifact-title {
 			font-size: 2rem;
+		}
+
+		.artifact-row {
+			padding: 1rem;
 		}
 
 		.year-group {
